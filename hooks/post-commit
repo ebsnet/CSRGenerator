@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# stop execution once a command returns a non-zero exit code
+set -e
+
+main() {
+    local current_branch
+    current_branch="$(git branch | grep '\*' | cut -d ' ' -f2)"
+    if [[ "$current_branch" != "feature/"* ]]; then
+        echo "No feature branch detected. Not updating dependency locks"
+        return 0
+    fi
+    # write new locks
+    ./gradlew dependencies --write-locks -Penv=prod
+
+    # check if the locks changed
+    local add_out
+    add_out="$(git add --dry-run gradle.lockfile)"
+    if [ -n "$add_out" ]; then
+        # add the changed locks
+        git add gradle.lockfile
+        # commit the changed locks
+        git commit -m "chores(gradle): Update dependency locks"
+    fi
+}
+
+main
+
