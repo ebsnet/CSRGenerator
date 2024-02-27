@@ -208,6 +208,14 @@ dependencyCheck {
   scanConfigurations = ['implementation', 'compileOnly', 'runtimeOnly', 'testImplementation', 'testRuntimeOnly', 'testCompileOnly']
 }
 
+// write application version to version property file
+import org.apache.tools.ant.filters.*
+processResources {
+  filter ReplaceTokens, tokens: [
+    "version": project.property("version"),
+  ]
+}
+
 application {
   // Define the main class for the application.
   mainClassName = 'de.ebsnet.crmf.CSRGenerator'
