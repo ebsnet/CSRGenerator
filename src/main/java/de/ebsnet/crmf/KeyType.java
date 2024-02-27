@@ -5,7 +5,7 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 
-enum KeyType {
+public enum KeyType {
   SIG,
   ENC,
   TLS;
