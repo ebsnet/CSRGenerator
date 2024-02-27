@@ -12,8 +12,9 @@ import picocli.CommandLine.Command;
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     description = "Create SM PKI Compatible CSRs",
+    // TODO: enable subcommands once they work
     subcommands = {Initial.class, PEM2PKCS12.class /*, Renew.class, SendRequest.class*/})
-public final class CSRGenerator /*implements Callable<Void>*/ {
+public final class CSRGenerator {
   static {
     CSRGenerator.init();
   }
