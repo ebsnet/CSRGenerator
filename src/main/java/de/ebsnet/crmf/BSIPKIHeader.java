@@ -17,7 +17,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
  */
 final class BSIPKIHeader extends PKIHeader {
   private static final Logger LOG = Logger.getLogger(BSIPKIHeader.class.getName());
-  private static final ASN1ObjectIdentifier OID_BSI_CERT_REQ_MSGS =
+  public static final ASN1ObjectIdentifier OID_BSI_CERT_REQ_MSGS =
       new ASN1ObjectIdentifier("0.4.0.127.0.7.4.1.1.1");
 
   public BSIPKIHeader() {
