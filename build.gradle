@@ -35,7 +35,7 @@ plugins {
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.0.0'
 
-  id 'com.github.johnrengelman.shadow' version '7.1.2'
+  id "com.github.bjornvester.wsdl2java" version "1.2"
 }
 
 group = 'de.ebsnet'
@@ -152,18 +152,33 @@ pmd {
 }
 
 def versions = [
-  bc: '1.77',
+  bc: '1.75',
+  ws: '2.3.3'
 ]
 
 dependencies {
   implementation "org.bouncycastle:bcpkix-jdk18on:${versions.bc}"
-  implementation "org.bouncycastle:bcutil-jdk18on:${versions.bc}"
   implementation "org.bouncycastle:bcprov-jdk18on:${versions.bc}"
+  implementation "org.bouncycastle:bctls-jdk18on:${versions.bc}"
+  implementation "org.bouncycastle:bcutil-jdk18on:${versions.bc}"
+
 
 //  implementation 'org.bouncycastle:bc-fips:1.0.2.4'
 //  implementation 'org.bouncycastle:bcpkix-fips:1.0.7'
 
   implementation 'info.picocli:picocli:4.7.5'
+
+  implementation "com.sun.xml.ws:jaxws-ri:${versions.ws}"
+  implementation "jakarta.xml.bind:jakarta.xml.bind-api:${versions.ws}"
+  // implementation 'com.sun.xml.ws:rt:2.3.1'
+  // implementation 'javax.xml.bind:jaxb-api:2.3.1'
+  implementation "jakarta.xml.ws:jakarta.xml.ws-api:${versions.ws}"
+  implementation "com.sun.xml.ws:jaxws-rt:${versions.ws}"
+  implementation 'javax.xml.ws:jaxws-api:2.3.1'
+
+  implementation 'javax.xml.bind:jaxb-api:2.3.1'
+  implementation 'jakarta.xml.soap:jakarta.xml.soap-api:1.4.2'
+  implementation 'javax.xml.soap:javax.xml.soap-api:1.4.0'
 
 //  testImplementation 'junit:junit:4.13.1'
 
@@ -219,6 +234,13 @@ processResources {
 application {
   // Define the main class for the application.
   mainClassName = 'de.ebsnet.crmf.CSRGenerator'
+}
+
+wsdl2java {
+  // cxfVersion = "${versions.ws}"
+  // includes = [
+  //   "src/main/resources/wsdl/TerminalAuthentication/CVCA/TerminalAuthentication-CVCA-TowardsDV.wsdl",
+  // ]
 }
 
 void prepare() {

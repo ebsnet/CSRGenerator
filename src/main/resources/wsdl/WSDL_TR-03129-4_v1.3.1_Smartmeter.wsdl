@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+	name="SmartMeter-PKI"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="uri://bsi.bund.de/Smart-Meter-PKI-Protocol/1.3"
+	targetNamespace="uri://bsi.bund.de/Smart-Meter-PKI-Protocol/1.3">
+ <wsdl:documentation>
+    SmartMeter PKI Protocols
+    TR-03129-4 v1.3.1
+    Bundesamt für Sicherheit in der Informationstechnik
+ </wsdl:documentation>
+
+ <!-- Definition of the types and messages of the protocol -->
+
+ <wsdl:types>
+	<xs:schema
+	targetNamespace="uri://bsi.bund.de/Smart-Meter-PKI-Protocol/1.3"
+	xmlns:tns="uri://bsi.bund.de/Smart-Meter-PKI-Protocol/1.3"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+		<!-- Generic types -->
+
+		<xs:simpleType name="CallbackIndicatorType">
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="callback_possible"/>
+				<xs:enumeration value="callback_not_possible"/>
+			</xs:restriction>
+		</xs:simpleType>
+
+		<xs:complexType name="CertificateSequenceType">
+			<xs:sequence>
+				<xs:element name="certificate" type="xs:base64Binary" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+			
+
+		<!-- Messages -->
+
+		<xs:element name="RequestCertificate_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="callbackIndicator" type="tns:CallbackIndicatorType"/>
+					<xs:element name="messageID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="certReq" type="xs:base64Binary"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="RequestCertificate_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="certificateSeq" type="tns:CertificateSequenceType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_syntax"/>
+								<xs:enumeration value="ok_cert_available"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_incorrect_request"/>
+								<xs:enumeration value="failure_synchronous_processing_not_possible"/>
+								<xs:enumeration value="failure_request_not_accepted"/>
+								<xs:enumeration value="failure_unauthorized_request"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+								<xs:enumeration value="failure_inner_signature"/>
+								<xs:enumeration value="failure_outer_signature"/>
+								<xs:enumeration value="failure_authorization_signature"/>								
+								<xs:enumeration value="failure_domain_parameters"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="SendCertificates_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="messageID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="statusInfo">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_cert_available"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_incorrect_request"/>
+								<xs:enumeration value="failure_request_not_accepted"/>
+								<xs:enumeration value="failure_unauthorized_request"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+								<xs:enumeration value="failure_inner_signature"/>
+								<xs:enumeration value="failure_outer_signature"/>
+								<xs:enumeration value="failure_authorization_signature"/>								
+								<xs:enumeration value="failure_domain_parameters"/>
+								<xs:enumeration value="failure_cert_not_available"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="statusInfoMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="certificateSeq" type="tns:CertificateSequenceType" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="SendCertificates_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_received_correctly"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_messageID_unknown"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GetCertificateChain_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="callbackIndicator" type="tns:CallbackIndicatorType"/>
+					<xs:element name="messageID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="certReference" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GetCertificateChain_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="certificateSequence" type="tns:CertificateSequenceType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_syntax"/>
+								<xs:enumeration value="ok_cert_available"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_synchronous_processing_not_possible"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+								<xs:enumeration value="failure_cert_not_available"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="CertificateRevocationRequest_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<!-- <xs:element name="callbackIndicator" type="tns:CallbackIndicatorType"/> -->					
+					<xs:element name="callbackIndicator" type="xs:string" fixed="callback_not_possible"/>
+					<xs:element name="messageID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="certRevReq" type="xs:base64Binary"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="CertificateRevocationRequest_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_received_correctly"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_incorrect_request"/>								
+								<xs:enumeration value="failure_request_not_accepted"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GeneralMessage_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="callerID" type="xs:string"/>
+					<xs:element name="messageID" type="xs:string"/>
+					<xs:element name="subject" type="xs:string"/>
+					<xs:element name="body" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GeneralMessage_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_received_correctly"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GetServiceStatus_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="messageID" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GetServiceStatus_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_received_correctly"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="UpdateDeviceAdmin_Req">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="callbackIndicator" type="xs:string" fixed="callback_not_possible"/>
+					<xs:element name="messageID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="updDevAdminReq" type="xs:base64Binary"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="UpdateDeviceAdmin_Res">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="returnCode">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ok_received_correctly"/>
+								<xs:enumeration value="failure_syntax"/>
+								<xs:enumeration value="failure_incorrect_request"/>								
+								<xs:enumeration value="failure_request_not_accepted"/>
+								<xs:enumeration value="failure_other_error"/>
+								<xs:enumeration value="failure_internal_error"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="returnCodeMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+	</xs:schema>
+ </wsdl:types>
+
+
+ <!-- Definition of the messages of the protocol -->
+ <!--                                            -->
+ <wsdl:message name="RequestCertificate_Req">
+	<wsdl:part name="RequestCertificate_Req" element="tns:RequestCertificate_Req"/>
+ </wsdl:message>
+ <wsdl:message name="RequestCertificate_Res">
+	<wsdl:part name="RequestCertificate_Res" element="tns:RequestCertificate_Res"/>
+ </wsdl:message>
+
+ <wsdl:message name="SendCertificates_Req">
+	<wsdl:part name="SendCertificates_Req" element="tns:SendCertificates_Req"/>
+ </wsdl:message>
+ <wsdl:message name="SendCertificates_Res">
+	<wsdl:part name="SendCertificates_Res" element="tns:SendCertificates_Res"/>
+ </wsdl:message>
+
+ <wsdl:message name="GetCertificateChain_Req">
+	<wsdl:part name="GetCertificateChain_Req" element="tns:GetCertificateChain_Req"/>
+ </wsdl:message>
+ <wsdl:message name="GetCertificateChain_Res">
+	<wsdl:part name="GetCertificateChain_Res" element="tns:GetCertificateChain_Res"/>
+ </wsdl:message>
+ 
+ <wsdl:message name="CertificateRevocationRequest_Req">
+	<wsdl:part name="CertificateRevocationRequest_Req" element="tns:CertificateRevocationRequest_Req"/>
+ </wsdl:message>
+ <wsdl:message name="CertificateRevocationRequest_Res">
+	<wsdl:part name="CertificateRevocationRequest_Res" element="tns:CertificateRevocationRequest_Res"/>
+ </wsdl:message>
+ 
+ <wsdl:message name="GeneralMessage_Req">
+	<wsdl:part name="GeneralMessage_Req" element="tns:GeneralMessage_Req"/>
+ </wsdl:message>
+ <wsdl:message name="GeneralMessage_Res">
+	<wsdl:part name="GeneralMessage_Res" element="tns:GeneralMessage_Res"/>
+ </wsdl:message>
+
+ <wsdl:message name="GetServiceStatusRequest">
+ 	<wsdl:part name="GetServiceStatus_Req" element="tns:GetServiceStatus_Req"></wsdl:part>
+ </wsdl:message>
+ <wsdl:message name="GetServiceStatusResponse">
+ 	<wsdl:part name="GetServiceStatus_Res" element="tns:GetServiceStatus_Res"></wsdl:part>
+ </wsdl:message>
+ 
+ <wsdl:message name="UpdateDeviceAdminRequest">
+	<wsdl:part name="UpdateDeviceAdmin_Req" element="tns:UpdateDeviceAdmin_Req"/>
+ </wsdl:message>
+ <wsdl:message name="UpdateDeviceAdminResult">
+	<wsdl:part name="UpdateDeviceAdmin_Res" element="tns:UpdateDeviceAdmin_Res"/>
+ </wsdl:message>
+ 
+ <!-- Definition of the portType -->
+ <!--                            -->
+
+ 
+ <wsdl:portType name="SmartMeterPortType">
+	<wsdl:operation name="RequestCertificate">
+		<wsdl:input message="tns:RequestCertificate_Req"/>
+		<wsdl:output message="tns:RequestCertificate_Res"/>
+	</wsdl:operation>
+	<wsdl:operation name="SendCertificates">
+		<wsdl:input message="tns:SendCertificates_Req"/>
+		<wsdl:output message="tns:SendCertificates_Res"/>
+	</wsdl:operation>
+	<wsdl:operation name="GetCertificateChain">
+		<wsdl:input message="tns:GetCertificateChain_Req"/>
+		<wsdl:output message="tns:GetCertificateChain_Res"/>
+	</wsdl:operation>
+	<wsdl:operation name="CertificateRevocationRequest">
+		<wsdl:input message="tns:CertificateRevocationRequest_Req"/>
+		<wsdl:output message="tns:CertificateRevocationRequest_Res"/>
+	</wsdl:operation>
+	<wsdl:operation name="GeneralMessage">
+		<wsdl:input message="tns:GeneralMessage_Req"/>
+		<wsdl:output message="tns:GeneralMessage_Res"/>
+	</wsdl:operation>
+	<wsdl:operation name="GetServiceStatus">
+		<wsdl:input message="tns:GetServiceStatusRequest"/>
+		<wsdl:output message="tns:GetServiceStatusResponse"/>
+	</wsdl:operation>
+	<wsdl:operation name="UpdateDeviceAdmin">
+		<wsdl:input message="tns:UpdateDeviceAdminRequest"/>
+		<wsdl:output message="tns:UpdateDeviceAdminResult"/>
+	</wsdl:operation>
+ </wsdl:portType>
+
+
+ <!-- Definition of the binding of the protocol -->
+ <!--                                           -->
+  <wsdl:binding name="SmartMeterBinding" type="tns:SmartMeterPortType">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+	<wsdl:operation name="RequestCertificate">
+		<soap:operation soapAction="RequestCertificate"/>
+		<wsdl:input>
+			<soap:body parts="RequestCertificate_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="RequestCertificate_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+
+	<wsdl:operation name="SendCertificates">
+		<soap:operation soapAction="SendCertificates"/>
+		<wsdl:input>
+			<soap:body parts="SendCertificates_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="SendCertificates_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+
+	<wsdl:operation name="GetCertificateChain">
+		<soap:operation soapAction="GetCertificateChain"/>
+		<wsdl:input>
+			<soap:body parts="GetCertificateChain_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="GetCertificateChain_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+	
+	<wsdl:operation name="CertificateRevocationRequest">
+		<soap:operation soapAction="CertificateRevocationRequest"/>
+		<wsdl:input>
+			<soap:body parts="CertificateRevocationRequest_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="CertificateRevocationRequest_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+
+	<wsdl:operation name="GeneralMessage">
+		<soap:operation soapAction="GeneralMessage"/>
+		<wsdl:input>
+			<soap:body parts="GeneralMessage_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="GeneralMessage_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+
+	<wsdl:operation name="GetServiceStatus">
+		<soap:operation soapAction="GetServiceStatus"/>
+		<wsdl:input>
+			<soap:body parts="GetServiceStatus_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="GetServiceStatus_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+ 
+	<wsdl:operation name="UpdateDeviceAdmin">
+		<soap:operation soapAction="UpdateDeviceAdmin"/>
+		<wsdl:input>
+			<soap:body parts="UpdateDeviceAdmin_Req" use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body parts="UpdateDeviceAdmin_Res" use="literal"/>
+		</wsdl:output>
+	</wsdl:operation>
+ </wsdl:binding>
+
+ <wsdl:service name="SmartMeterService">
+	<wsdl:port name="SmartMeterServicePort" binding="tns:SmartMeterBinding">
+            <soap:address location="http://URL_NOT_SPECIFIED"/>
+        </wsdl:port>
+ </wsdl:service> 
+
+</wsdl:definitions>
