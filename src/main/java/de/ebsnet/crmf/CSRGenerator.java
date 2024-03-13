@@ -15,11 +15,11 @@ import picocli.CommandLine.Command;
     // TODO: enable subcommands once they work
     subcommands = {Initial.class, PEM2PKCS12.class /*, Renew.class, SendRequest.class*/})
 public final class CSRGenerator {
+  private static final AtomicBoolean IS_INIT = new AtomicBoolean(false);
+
   static {
     CSRGenerator.init();
   }
-
-  private static final AtomicBoolean IS_INIT = new AtomicBoolean(false);
 
   public static void main(final String[] args) {
     //    final var new_args =
