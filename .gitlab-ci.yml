@@ -1,4 +1,4 @@
-image: openjdk:11-jdk-slim
+image: openjdk:11.0.16-jdk-slim
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
