@@ -20,7 +20,7 @@ plugins {
   id 'com.diffplug.spotless' version '6.25.0'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '5.0.13'
+  id 'com.github.spotbugs' version '5.2.5'
   // check for vulnerable dependencies
   // EXPERIMENTAL(task has to be integrated with build process)
   id 'org.owasp.dependencycheck' version '7.0.4.1'
