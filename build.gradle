@@ -21,15 +21,10 @@ plugins {
   // analyze code and find potential bugs
   id 'pmd'
   id 'com.github.spotbugs' version '5.2.5'
-  // check for vulnerable dependencies
-  // EXPERIMENTAL(task has to be integrated with build process)
-  id 'org.owasp.dependencycheck' version '7.4.4'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
   id 'maven-publish'
-  // notifications if there are dependency updates available (provides gradle task 'dependencyUpdates')
-  id 'com.github.ben-manes.versions' version '0.51.0'
   // some lints for dependencies
   id 'nebula.lint' version '17.8.0'
   // resolve git branch name
@@ -100,8 +95,6 @@ gradleLint {
   gradleLint.autoLintAfterFailure = false
   // do not run linter on task publish
   skipForTask('publish')
-  // skip linter on dependencycheck
-  skipForTask('dependencyCheckAnalyze')
   // skip linter on IntelliJ init task
   skipForTask('prepareKotlinBuildScriptModel')
   skipForTask('ijDownloadSources')
@@ -216,11 +209,6 @@ jar {
 
 test {
   finalizedBy jacocoTestReport
-}
-
-dependencyCheck {
-  failBuildOnCVSS = 7
-  scanConfigurations = ['implementation', 'compileOnly', 'runtimeOnly', 'testImplementation', 'testRuntimeOnly', 'testCompileOnly']
 }
 
 // write application version to version property file
