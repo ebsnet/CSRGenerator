@@ -31,7 +31,7 @@ plugins {
   // notifications if there are dependency updates available (provides gradle task 'dependencyUpdates')
   id 'com.github.ben-manes.versions' version '0.51.0'
   // some lints for dependencies
-  id 'nebula.lint' version '17.7.0'
+  id 'nebula.lint' version '17.8.0'
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.0.0'
 
