@@ -183,7 +183,7 @@ dependencies {
 //  testImplementation 'junit:junit:4.13.1'
 
   // additional spotbugs detectors
-  spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+  spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0'
   // TODO activate and fix warnings
   // spotbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:7.4.7'// EXPERIMENTAL
   // provides annotations to suppress spotbugs warnings
