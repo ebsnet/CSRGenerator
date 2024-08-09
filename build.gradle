@@ -20,7 +20,7 @@ plugins {
   id 'com.diffplug.spotless' version '6.25.0'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.0.19'
+  id 'com.github.spotbugs' version '6.0.20'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
