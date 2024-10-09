@@ -28,7 +28,7 @@ plugins {
   // some lints for dependencies
   id 'nebula.lint' version '20.1.0'
   // resolve git branch name
-  id 'org.ajoberstar.grgit' version '5.2.2'
+  id 'org.ajoberstar.grgit' version '5.3.0'
 
   id "com.github.bjornvester.wsdl2java" version "1.2"
 }
