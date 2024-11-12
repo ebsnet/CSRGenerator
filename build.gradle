@@ -226,7 +226,7 @@ processResources {
 
 application {
   // Define the main class for the application.
-  mainClassName = 'de.ebsnet.crmf.CSRGenerator'
+  mainClass = 'de.ebsnet.crmf.CSRGenerator'
 }
 
 wsdl2java {
