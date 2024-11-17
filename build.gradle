@@ -151,7 +151,7 @@ pmd {
 
 def versions = [
   bc: '1.79',
-  ws: '2.3.3'
+  ws: '2.3.7'
 ]
 
 dependencies {
