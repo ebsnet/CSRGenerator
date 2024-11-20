@@ -80,6 +80,7 @@ public final class Initial extends BaseCommand implements Callable<Void> {
       defaultValue = "SM-PKI-DE")
   private String pki;
 
+  @Override
   public Void call() throws CRMFException, IOException, OperatorCreationException {
     final var normalizedName = this.name.contains(".EMT.MAK") ? this.name : this.name + ".EMT.MAK";
     final var dirName =
