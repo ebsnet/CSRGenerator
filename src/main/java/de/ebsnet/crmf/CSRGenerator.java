@@ -13,7 +13,8 @@ import picocli.CommandLine.Command;
     versionProvider = VersionProvider.class,
     description = "Create SM PKI Compatible CSRs",
     // TODO: enable subcommands once they work
-    subcommands = {Initial.class, PEM2PKCS12.class /*, Renew.class, SendRequest.class*/})
+    subcommands = {Initial.class, PEM2PKCS12.class /* , Renew.class, SendRequest.class */})
+@SuppressWarnings("PMD.UseUtilityClass")
 public final class CSRGenerator {
   private static final AtomicBoolean IS_INIT = new AtomicBoolean(false);
 
@@ -22,24 +23,24 @@ public final class CSRGenerator {
   }
 
   public static void main(final String[] args) {
-    //    final var new_args =
-    //        new String[] {
-    //          "renew",
-    //          "--encryption",
-    //          "/tmp/csr_test/enc.pem",
-    //          "--signature",
-    //          "/tmp/csr_test/sig.pem",
-    //          "--tls",
-    //          "/tmp/csr_test/tls.pem",
-    //          "--previous-certificate",
-    //          "/tmp/csr_test/enc_cert.pem",
-    //          "--previous-keypair",
-    //          "/tmp/csr_test/enc_key.pem",
-    //          "--out",
-    //          "/tmp/csr_test/out.pem"
-    //        };
+    // final var new_args =
+    // new String[] {
+    // "renew",
+    // "--encryption",
+    // "/tmp/csr_test/enc.pem",
+    // "--signature",
+    // "/tmp/csr_test/sig.pem",
+    // "--tls",
+    // "/tmp/csr_test/tls.pem",
+    // "--previous-certificate",
+    // "/tmp/csr_test/enc_cert.pem",
+    // "--previous-keypair",
+    // "/tmp/csr_test/enc_key.pem",
+    // "--out",
+    // "/tmp/csr_test/out.pem"
+    // };
     System.exit(new CommandLine(new CSRGenerator()).execute(args));
-    //    System.exit(new CommandLine(new CSRGenerator()).execute(new_args));
+    // System.exit(new CommandLine(new CSRGenerator()).execute(new_args));
   }
 
   public static void init() {

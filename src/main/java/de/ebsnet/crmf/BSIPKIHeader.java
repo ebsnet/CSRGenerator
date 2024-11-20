@@ -15,6 +15,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 /**
  * {@link PKIHeader} for the bsiCertReqMsgs (BSI TR-03109) with OID {@code 0.4.0.127.0.7.4.1.1.1}.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class BSIPKIHeader extends PKIHeader {
   private static final Logger LOG = Logger.getLogger(BSIPKIHeader.class.getName());
   public static final ASN1ObjectIdentifier OID_BSI_CERT_REQ_MSGS =
