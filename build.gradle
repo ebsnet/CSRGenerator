@@ -151,7 +151,6 @@ pmd {
 
 def versions = [
   bc: '1.79',
-  ws: '2.3.7'
 ]
 
 dependencies {
@@ -166,12 +165,12 @@ dependencies {
 
   implementation 'info.picocli:picocli:4.7.6'
 
-  implementation "com.sun.xml.ws:jaxws-ri:${versions.ws}"
-  implementation "jakarta.xml.bind:jakarta.xml.bind-api:${versions.ws}"
+  implementation "com.sun.xml.ws:jaxws-ri:2.3.7"
+  implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3"
   // implementation 'com.sun.xml.ws:rt:2.3.1'
   // implementation 'javax.xml.bind:jaxb-api:2.3.1'
-  implementation "jakarta.xml.ws:jakarta.xml.ws-api:${versions.ws}"
-  implementation "com.sun.xml.ws:jaxws-rt:${versions.ws}"
+  implementation "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3"
+  implementation "com.sun.xml.ws:jaxws-rt:2.3.7"
   implementation 'javax.xml.ws:jaxws-api:2.3.1'
 
   implementation 'javax.xml.bind:jaxb-api:2.3.1'
