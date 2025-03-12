@@ -1,15 +1,6 @@
-/**
- * Gradle build file for Java EE projects
- * author: Valentin Brandl
- * created: 2017-06-20
- */
-
 buildscript {
   repositories {
-    maven {
-      url 'http://192.168.118.4:8081/repository/maven-public/'
-      allowInsecureProtocol true
-    }
+    mavenCentral()
   }
 }
 
@@ -37,25 +28,13 @@ group = 'de.ebsnet'
 // version must be set _before_ applying helper.gradle
 version = '1.0.0'
 
-// include helper functions
-apply from: resources.text.fromInsecureUri('http://192.168.118.4/EBSnet/documentation/gradle-doc/raw/master/helper.gradle')
-
-if (!(isProdEnv || environment == 'check')) {
-  // disable spotbugs, pmd on 'dev' builds
-  [tasks.withType(Pmd), tasks.withType(com.github.spotbugs.snom.SpotBugsTask)].each {
-    it.all { enabled = false }
-  }
-}
-
 dependencyLocking {
-  if (isProdEnv) {
-    lockAllConfigurations()
-  }
+  lockAllConfigurations()
 }
 
 spotless {
   java {
-    googleJavaFormat('1.15.0')
+    googleJavaFormat('1.24.0')
   }
 }
 
@@ -72,13 +51,6 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(Javadoc).configureEach {
   options.encoding = 'UTF-8'
-}
-
-// log the build environment for all tasks from the build group
-tasks.findAll { (it.group == 'build') } . each {
-  it.doFirst {
-    logger.warn((isProdEnv ? 'Production' : 'Development') + ' build')
-  }
 }
 
 java {
@@ -107,14 +79,7 @@ gradleLint {
 
 // remote repositories for 3rd party dependencies
 repositories {
-  if (!isProdEnv) {
-    // local maven repository
-    mavenLocal()
-  }
-  maven {
-    url 'http://192.168.118.4:8081/repository/maven-public/'
-    allowInsecureProtocol true
-  }
+  mavenCentral()
 }
 
 spotbugsMain {
@@ -159,16 +124,10 @@ dependencies {
   implementation "org.bouncycastle:bctls-jdk18on:${versions.bc}"
   implementation "org.bouncycastle:bcutil-jdk18on:${versions.bc}"
 
-
-//  implementation 'org.bouncycastle:bc-fips:1.0.2.4'
-//  implementation 'org.bouncycastle:bcpkix-fips:1.0.7'
-
   implementation 'info.picocli:picocli:4.7.6'
 
   implementation "com.sun.xml.ws:jaxws-ri:2.3.7"
   implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3"
-  // implementation 'com.sun.xml.ws:rt:2.3.1'
-  // implementation 'javax.xml.bind:jaxb-api:2.3.1'
   implementation "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3"
   implementation "com.sun.xml.ws:jaxws-rt:2.3.7"
   implementation 'javax.xml.ws:jaxws-api:2.3.1'
@@ -176,8 +135,6 @@ dependencies {
   implementation 'javax.xml.bind:jaxb-api:2.3.1'
   implementation 'jakarta.xml.soap:jakarta.xml.soap-api:1.4.2'
   implementation 'javax.xml.soap:javax.xml.soap-api:1.4.0'
-
-//  testImplementation 'junit:junit:4.13.1'
 
   // additional spotbugs detectors
   spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0'
@@ -188,17 +145,6 @@ dependencies {
 }
 
 def latestCommitHash = grgit.head().abbreviatedId
-
-// write application version to version property file
-import org.apache.tools.ant.filters.*
-processResources {
-  filesNotMatching(["**/keys/*"]) {
-    filter ReplaceTokens, tokens: [
-      "version": project.property("version"),
-      "commit": latestCommitHash
-    ]
-  }
-}
 
 // MANIFEST.mf properties
 jar {
@@ -220,6 +166,7 @@ import org.apache.tools.ant.filters.*
 processResources {
   filter ReplaceTokens, tokens: [
     "version": project.property("version"),
+    "commit": latestCommitHash
   ]
 }
 
@@ -233,6 +180,10 @@ wsdl2java {
   // includes = [
   //   "src/main/resources/wsdl/TerminalAuthentication/CVCA/TerminalAuthentication-CVCA-TowardsDV.wsdl",
   // ]
+}
+
+spotlessJava {
+  dependsOn ':wsdl2java'
 }
 
 void prepare() {
@@ -249,5 +200,5 @@ void prepare() {
     }
   }
 }
-prepare()
+// prepare()
 // vim: set filetype=groovy ts=2 sw=2 tw=120 et :
