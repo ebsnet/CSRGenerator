@@ -76,16 +76,16 @@ public final class SendRequest implements Callable<Void> {
   public static void main(final String[] args)
       throws UnrecoverableKeyException, CertificateException, IOException, NoSuchAlgorithmException,
           KeyStoreException, NoSuchProviderException, InterruptedException, KeyManagementException {
-    final var sender = new SendRequest();
-    sender.tlsCertPath = Path.of("./keys/old/TEN.EMT.MAK_TLS_417.pem");
-    sender.tlsKeyPath = Path.of("./keys/old/tls.key");
-    // sr.csrPath = Path.of("./keys/new/csr.pem");
-    sender.csrPath = Path.of("./csr4.pem");
-    sender.uri =
-        // URI.create("http://localhost:8080");
+    final var sendRequest = new SendRequest();
+    sendRequest.tlsCertPath =
+        Path.of("/home/me/Dokumente/work/keys/old/personalTLSCertificate.pem");
+    sendRequest.tlsKeyPath = Path.of("/home/me/Dokumente/work/keys/old/tls.pem");
+    sendRequest.csrPath = Path.of("./keys/new/csr.pem");
+    sendRequest.uri =
+        //      URI.create("http://localhost:8080");
         URI.create("https://test.sub-ca.da-rz.net:8443/metering-ca/services/SmartMeterService");
-    sender.out = Path.of("./res.txt");
-    sender.call();
+    sendRequest.out = Path.of("/home/me/Dokumente/work");
+    sendRequest.call();
   }
 
   private SSLContext sslContext()

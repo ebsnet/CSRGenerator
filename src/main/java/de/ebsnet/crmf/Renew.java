@@ -10,21 +10,17 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.naming.InvalidNameException;
-import javax.naming.ldap.LdapName;
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cmp.PKIMessage;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
-import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
@@ -72,18 +68,27 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           "Path to the old certificate. This is used to sign the renewal and for metadata of the new certificates")
   private Path prevCertificate;
 
+  private Path darzCertificate;
+
   public static void main(final String[] args)
       throws InvalidNameException, CRMFException, GeneralSecurityException, IOException,
           OperatorCreationException, CMSException, NoSuchFieldException, IllegalAccessException {
     final var renew = new Renew();
     renew.prevCertificate =
-        Path.of("/home/me/work/tmp/crmf-csr/keys/old/TEN.EMT.MAK_Signature_417.pem");
+        Path.of("/home/me/work/tmp/crmf-csr/keys/old/personalSignatureCertificate.pem");
+    renew.darzCertificate = Path.of("/home/me/Dokumente/work/keys/old/DARZ-Test.CA-SN4-2022.pem");
     renew.prevKeyPair = Path.of("/home/me/work/tmp/crmf-csr/keys/old/sig.key");
     renew.encPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/enc.key");
     renew.sigPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/sig.key");
     renew.tlsPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/tls.key");
     renew.out = Path.of("/home/me/work/tmp/crmf-csr/csr4.pem");
-    renew.call();
+  }
+
+  @SuppressWarnings("PMD.UseVarargs")
+  /* default */ static <T> T[] concatWithArrayCopy(final T[] array1, final T[] array2) {
+    final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
+    System.arraycopy(array2, 0, result, array1.length, array2.length);
+    return result;
   }
 
   @Override
@@ -95,33 +100,27 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           OperatorCreationException, CMSException, NoSuchFieldException, IllegalAccessException {
     final var prevKp = loadKeyPair(this.prevKeyPair);
     final var prevCerts = loadCertificateChain(this.prevCertificate);
+    final var dartCerts = loadCertificateChain(this.darzCertificate);
+    final X509Certificate[] allCerts = concatWithArrayCopy(prevCerts, dartCerts);
 
-    final var subject = new LdapName(prevCerts[0].getSubjectX500Principal().getName());
-    final var filteredSubject =
-        new X500Name(
-            subject.getRdns().stream()
-                .filter(rdn -> RDNS.contains(rdn.getType()))
-                .map(rdn -> rdn.getType() + '=' + rdn.getValue())
-                .collect(Collectors.joining(",")));
-
-    final var regInfo = new AttributeTypeAndValue[0];
+    final var filteredSubject = new JcaX509CertificateHolder(prevCerts[0]).getSubject();
 
     final var email = extractSAN(prevCerts[0], GeneralName.rfc822Name);
     final var uri = URI.create(extractSAN(prevCerts[0], GeneralName.uniformResourceIdentifier));
 
     final var sigKp = loadKeyPair(this.sigPath);
-    final var sigCrmf = certReqMsg(sigKp, KeyType.SIG, filteredSubject, uri, email, regInfo);
+    final var sigCrmf = certReqMsg(sigKp, KeyType.SIG, filteredSubject, uri, email);
 
     final var encKp = loadKeyPair(this.encPath);
-    final var encCrmf = certReqMsg(encKp, KeyType.ENC, filteredSubject, uri, email, regInfo);
+    final var encCrmf = certReqMsg(encKp, KeyType.ENC, filteredSubject, uri, email);
 
     final var tlsKp = loadKeyPair(this.tlsPath);
-    final var tlsCrmf = certReqMsg(tlsKp, KeyType.TLS, filteredSubject, uri, email, regInfo);
+    final var tlsCrmf = certReqMsg(tlsKp, KeyType.TLS, filteredSubject, uri, email);
 
     final var crmf = merge(tlsCrmf, encCrmf, sigCrmf);
     final var pkiMsg = wrap(crmf, true);
 
-    final var renewalCsr = outerSignature(prevKp, prevCerts, pkiMsg);
+    final var renewalCsr = outerSignature(prevKp, allCerts, pkiMsg);
     final var csr = renewalCsr.getEncoded();
     var offsetContentType = OFFSET_CONTENT_TYPE;
     for (final var content : SignedCSRData.CONTENT_TYPE.getEncoded()) {
@@ -152,9 +151,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     final var gen = new CMSSignedDataGenerator();
     final var signedAttributes = new ASN1EncodableVector();
     signedAttributes.add(
-        new Attribute(
-            CMSAttributes.contentType,
-            new DERSet(new ASN1ObjectIdentifier("1.2.840.113549.1.7.1"))));
+        new Attribute(CMSAttributes.contentType, new DERSet(BSIPKIHeader.OID_BSI_CERT_REQ_MSGS)));
 
     final var signedAttributesTable = new AttributeTable(signedAttributes);
     final var signer =
@@ -169,9 +166,9 @@ public final class Renew extends BaseCommand implements Callable<Void> {
             .setSignedAttributeGenerator(
                 new DefaultSignedAttributeTableGenerator(signedAttributesTable))
             .build(signer, chain[0]));
+
     final var certStore = new JcaCertStore(List.of(chain));
     gen.addCertificates(certStore);
-
     return gen.generate(new SignedCSRData(csr), true);
   }
 }
