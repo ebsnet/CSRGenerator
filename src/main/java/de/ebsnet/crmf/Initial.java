@@ -21,6 +21,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+/** Subcommand to generate an initial CSR. */
 @Command(name = "initial", mixinStandardHelpOptions = true, description = "Generate an initial CSR")
 public final class Initial extends BaseCommand implements Callable<Void> {
   @Option(

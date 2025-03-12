@@ -17,6 +17,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+/** Subcommand to convert a PEM encoded key pair and certificate into a single PKCS12 keystore. */
 @Command(
     name = "pem2p12",
     mixinStandardHelpOptions = true,
@@ -60,7 +61,10 @@ public final class PEM2PKCS12 implements Callable<Void> {
 
   @Override
   public Void call()
-      throws CertificateException, IOException, KeyStoreException, NoSuchProviderException,
+      throws CertificateException,
+          IOException,
+          KeyStoreException,
+          NoSuchProviderException,
           NoSuchAlgorithmException {
     final var keyStore = loadKeyStore(this.out, this.keyStorePass);
     if (keyStore.containsAlias(this.alias)) {
@@ -89,8 +93,24 @@ public final class PEM2PKCS12 implements Callable<Void> {
     return null;
   }
 
+  /**
+   * Load a {@link KeyStore} from a file or initialize a new one in memory if {@code path} is {@code
+   * null}.
+   *
+   * @param path
+   * @param pass
+   * @return
+   * @throws CertificateException
+   * @throws IOException
+   * @throws NoSuchAlgorithmException
+   * @throws KeyStoreException
+   * @throws NoSuchProviderException
+   */
   private static KeyStore loadKeyStore(final Path path, final char... pass)
-      throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException,
+      throws CertificateException,
+          IOException,
+          NoSuchAlgorithmException,
+          KeyStoreException,
           NoSuchProviderException {
     final var keyStore = KeyStore.getInstance("PKCS12", BouncyCastleProvider.PROVIDER_NAME);
     if (null != path && path.toFile().isFile()) {
@@ -105,7 +125,10 @@ public final class PEM2PKCS12 implements Callable<Void> {
 
   public static KeyStore pemToPKCS12(
       final Path key, final Path cert, final String alias, final char... pass)
-      throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException,
+      throws KeyStoreException,
+          CertificateException,
+          IOException,
+          NoSuchAlgorithmException,
           NoSuchProviderException {
     final var keyPair = BaseCommand.loadKeyPair(key);
     final var certificate = BaseCommand.loadCertificateChain(cert);

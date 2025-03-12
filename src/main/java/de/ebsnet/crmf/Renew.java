@@ -40,6 +40,13 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 // TODO: This does not work, yet
+
+/**
+ * This should generate a renewal CSR according to the SM-PKI but our SubCA does not accept those
+ * yet.
+ *
+ * <p>If you have any ideas on how to properly implement this, PRs are very welcome.
+ */
 @Command(
     name = "renew",
     mixinStandardHelpOptions = true,
@@ -53,6 +60,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   private static final int OFFSET_CONTENT_TYPE = 2;
+
   // private static final int OFFSET_E_CONTENT_TYPE = 37;
 
   @Option(
@@ -68,15 +76,21 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           "Path to the old certificate. This is used to sign the renewal and for metadata of the new certificates")
   private Path prevCertificate;
 
-  private Path darzCertificate;
+  private Path trustChain;
 
   public static void main(final String[] args)
-      throws InvalidNameException, CRMFException, GeneralSecurityException, IOException,
-          OperatorCreationException, CMSException, NoSuchFieldException, IllegalAccessException {
+      throws InvalidNameException,
+          CRMFException,
+          GeneralSecurityException,
+          IOException,
+          OperatorCreationException,
+          CMSException,
+          NoSuchFieldException,
+          IllegalAccessException {
     final var renew = new Renew();
     renew.prevCertificate =
         Path.of("/home/me/work/tmp/crmf-csr/keys/old/personalSignatureCertificate.pem");
-    renew.darzCertificate = Path.of("/home/me/Dokumente/work/keys/old/DARZ-Test.CA-SN4-2022.pem");
+    renew.trustChain = Path.of("/home/me/Dokumente/work/keys/old/DARZ-Test.CA-SN4-2022.pem");
     renew.prevKeyPair = Path.of("/home/me/work/tmp/crmf-csr/keys/old/sig.key");
     renew.encPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/enc.key");
     renew.sigPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/sig.key");
@@ -85,7 +99,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   @SuppressWarnings("PMD.UseVarargs")
-  /* default */ static <T> T[] concatWithArrayCopy(final T[] array1, final T[] array2) {
+  private static <T> T[] concatArrays(final T[] array1, final T[] array2) {
     final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
     System.arraycopy(array2, 0, result, array1.length, array2.length);
     return result;
@@ -96,12 +110,18 @@ public final class Renew extends BaseCommand implements Callable<Void> {
       value = {"LDAP_INJECTION"},
       justification = "Not used for LDAP query")
   public Void call()
-      throws GeneralSecurityException, IOException, InvalidNameException, CRMFException,
-          OperatorCreationException, CMSException, NoSuchFieldException, IllegalAccessException {
+      throws GeneralSecurityException,
+          IOException,
+          InvalidNameException,
+          CRMFException,
+          OperatorCreationException,
+          CMSException,
+          NoSuchFieldException,
+          IllegalAccessException {
     final var prevKp = loadKeyPair(this.prevKeyPair);
     final var prevCerts = loadCertificateChain(this.prevCertificate);
-    final var dartCerts = loadCertificateChain(this.darzCertificate);
-    final X509Certificate[] allCerts = concatWithArrayCopy(prevCerts, dartCerts);
+    final var trustChain = loadCertificateChain(this.trustChain);
+    final X509Certificate[] allCerts = concatArrays(prevCerts, trustChain);
 
     final var filteredSubject = new JcaX509CertificateHolder(prevCerts[0]).getSubject();
 

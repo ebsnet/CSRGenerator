@@ -16,15 +16,18 @@ public final class VersionProvider implements CommandLine.IVersionProvider {
 
     static {
       String version;
+      String commit;
       try (var stream =
-          CSRGenerator.class.getClassLoader().getResourceAsStream("version.properties")) {
+          VersionProvider.class.getClassLoader().getResourceAsStream("version.properties")) {
         final var prop = new Properties();
         prop.load(stream);
         version = prop.getProperty("version", "0.0.0");
+        commit = prop.getProperty("commit", "unknown commit");
       } catch (final IOException ex) {
         version = "-0.0.0";
+        commit = "unknown commit";
       }
-      VERSION = version;
+      VERSION = version + " (" + commit + ") https://www.ebsnet.de";
     }
   }
 }

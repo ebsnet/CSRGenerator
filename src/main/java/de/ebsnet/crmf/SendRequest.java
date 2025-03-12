@@ -28,12 +28,18 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import uri.bsi_bund_de.smart_meter_pki_protocol._1.CallbackIndicatorType;
 import uri.bsi_bund_de.smart_meter_pki_protocol._1.RequestCertificateReq;
 import uri.bsi_bund_de.smart_meter_pki_protocol._1_3.SmartMeterService;
 
+/**
+ * This subcommand can be used to send a renewal CSR to the SubCA's renewal webservice.
+ *
+ * <p>This is not fully tested, since we currently cannot generate renewal CSRs
+ */
 @Command(name = "send", mixinStandardHelpOptions = true, description = "Send a Request for Renewal")
 @SuppressWarnings("PMD.ExcessiveImports")
 public final class SendRequest implements Callable<Void> {
@@ -74,8 +80,14 @@ public final class SendRequest implements Callable<Void> {
   private URI uri;
 
   public static void main(final String[] args)
-      throws UnrecoverableKeyException, CertificateException, IOException, NoSuchAlgorithmException,
-          KeyStoreException, NoSuchProviderException, InterruptedException, KeyManagementException {
+      throws UnrecoverableKeyException,
+          CertificateException,
+          IOException,
+          NoSuchAlgorithmException,
+          KeyStoreException,
+          NoSuchProviderException,
+          InterruptedException,
+          KeyManagementException {
     final var sendRequest = new SendRequest();
     sendRequest.tlsCertPath =
         Path.of("/home/me/Dokumente/work/keys/old/personalTLSCertificate.pem");
@@ -89,13 +101,19 @@ public final class SendRequest implements Callable<Void> {
   }
 
   private SSLContext sslContext()
-      throws NoSuchAlgorithmException, NoSuchProviderException, IOException, CertificateException,
-          KeyStoreException, UnrecoverableKeyException, KeyManagementException {
+      throws NoSuchAlgorithmException,
+          NoSuchProviderException,
+          IOException,
+          CertificateException,
+          KeyStoreException,
+          UnrecoverableKeyException,
+          KeyManagementException {
     final var pwd = Utils.randomPwd();
-    final var sslContext = SSLContext.getInstance("TLSv1.2", "BCJSSE");
+    final var sslContext =
+        SSLContext.getInstance("TLSv1.2", BouncyCastleJsseProvider.PROVIDER_NAME);
     final var keyStore = PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsCertPath, "tls", pwd);
 
-    final var kmf = KeyManagerFactory.getInstance("PKIX", "BCJSSE");
+    final var kmf = KeyManagerFactory.getInstance("PKIX", BouncyCastleJsseProvider.PROVIDER_NAME);
 
     kmf.init(keyStore, pwd);
 
@@ -107,8 +125,14 @@ public final class SendRequest implements Callable<Void> {
   @Override
   @SuppressWarnings("PMD.SystemPrintln")
   public Void call()
-      throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-          KeyStoreException, NoSuchProviderException, KeyManagementException, InterruptedException {
+      throws IOException,
+          UnrecoverableKeyException,
+          CertificateException,
+          NoSuchAlgorithmException,
+          KeyStoreException,
+          NoSuchProviderException,
+          KeyManagementException,
+          InterruptedException {
     try {
       final var sslContext = sslContext();
 
@@ -157,7 +181,8 @@ public final class SendRequest implements Callable<Void> {
   /**
    * Trust manager that accepts any server certificate. We are only sending CSRs to the webservice,
    * which do not contain sensitive data. Everything inside the CSR will be in the public
-   * certificate.
+   * certificate anyway. A proper implementation might extract the intermediate and root certificate
+   * from the CSR to use as trust anchor.
    */
   @SuppressFBWarnings("WEAK_TRUST_MANAGER")
   private static final class TrustAll extends X509ExtendedTrustManager {

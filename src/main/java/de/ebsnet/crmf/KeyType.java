@@ -5,12 +5,21 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 
+/** Key Types in an SM-PKI certificate triple. */
 @SuppressWarnings("PMD.OnlyOneReturn")
 public enum KeyType {
+  /** Signature key. */
   SIG,
+  /** Encryption key. */
   ENC,
+  /** TLS key. */
   TLS;
 
+  /**
+   * Get the required {@link KeyUsage} flags for each {@link KeyType}.
+   *
+   * @return
+   */
   public KeyUsage keyUsage() {
     switch (this) {
       case ENC:
@@ -23,6 +32,11 @@ public enum KeyType {
     }
   }
 
+  /**
+   * Some {@link KeyType}s also have {@link ExtendedKeyUsage} attributes.
+   *
+   * @return
+   */
   public Optional<ExtendedKeyUsage> extendedKeyUsage() {
     switch (this) {
       case TLS:

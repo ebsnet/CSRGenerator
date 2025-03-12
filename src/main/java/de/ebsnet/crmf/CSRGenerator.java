@@ -7,8 +7,9 @@ import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+/** Entrypoint. */
 @Command(
-    name = "CSRGenerator",
+    name = "EBSnet CSRGenerator",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     description = "Create SM PKI Compatible CSRs",
@@ -22,6 +23,11 @@ public final class CSRGenerator {
     CSRGenerator.init();
   }
 
+  /**
+   * Entrypoint
+   *
+   * @param args
+   */
   public static void main(final String[] args) {
     // final var new_args =
     // new String[] {
@@ -43,6 +49,10 @@ public final class CSRGenerator {
     // System.exit(new CommandLine(new CSRGenerator()).execute(new_args));
   }
 
+  /**
+   * Initialize JDK settings and security providers to enable Brainpool support, which has been
+   * removed from the JDK.
+   */
   public static void init() {
     // make sure this is only called once
     if (IS_INIT.compareAndSet(false, true)) {

@@ -41,6 +41,7 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import picocli.CommandLine.Option;
 
+/** Base for all subcommands */
 @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
 @SuppressWarnings({
   "PMD.ExcessiveImports",
@@ -112,11 +113,28 @@ public abstract class BaseCommand {
     }
   }
 
+  /**
+   * Load a single certificate from a file. If the file contains a certificate chain, the first
+   * certificate of the chain is returned.
+   *
+   * @param path
+   * @return
+   * @throws CertificateException
+   * @throws IOException
+   */
   public static X509Certificate loadCertificate(final Path path)
       throws CertificateException, IOException {
     return loadCertificateChain(path)[0];
   }
 
+  /**
+   * Load a certificate chain from a file.
+   *
+   * @param path
+   * @return
+   * @throws CertificateException
+   * @throws IOException
+   */
   public static X509Certificate[] loadCertificateChain(final Path path)
       throws CertificateException, IOException {
     final var fact = CertificateFactory.getInstance("X.509");
@@ -241,6 +259,14 @@ public abstract class BaseCommand {
     return wrap(messages, false);
   }
 
+  /**
+   * Create a {@link PKIMessage} with the {@link BSIPKIHeader} from the {@link
+   * CertificateReqMessages}.
+   *
+   * @param messages
+   * @param renewal should alwas be false since renewal is currently not supported
+   * @return
+   */
   protected static PKIMessage wrap(final CertificateReqMessages messages, final boolean renewal) {
     return new PKIMessage(
         new BSIPKIHeader(),

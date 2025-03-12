@@ -7,6 +7,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIMessage;
 import org.bouncycastle.cms.CMSTypedData;
 
+/** Trying to recreate the required ASN.1 structure for the renewal CSR. */
 public class SignedCSRData implements CMSTypedData {
   // TODO: not sure what the correct OID is...
   public static final ASN1ObjectIdentifier CONTENT_TYPE =

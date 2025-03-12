@@ -15,9 +15,15 @@ public final class Utils {
     return pwd;
   }
 
+  /**
+   * Generate a random password
+   *
+   * @return
+   */
   public static char[] randomPwd() {
     return randomPwd(ALPHA_NUM_ALPHABET, 32);
   }
 
+  /** This is a utility class. */
   private Utils() {}
 }
