@@ -1,6 +1,9 @@
-# CSRGenerator
+# EBSnet CSRGenerator
 
 This is a tool to generate CSRs for the SM-PKI.
+
+This tool is developed and published by [EBSnet | eEnergy Software
+GmbH](https://www.ebsnet.de).
 
 ## Generating Keys
 
