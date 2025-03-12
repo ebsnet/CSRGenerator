@@ -75,7 +75,7 @@ public final class SendRequest implements Callable<Void> {
       throws UnrecoverableKeyException, CertificateException, IOException, NoSuchAlgorithmException,
           KeyStoreException, NoSuchProviderException, InterruptedException, KeyManagementException {
     final var sr = new SendRequest();
-    sr.tlsCertPath = Path.of("/home/me/Dokumente/work/keys/old/EBSnet.EMT.MAK_TLS_539.pem");
+    sr.tlsCertPath = Path.of("/home/me/Dokumente/work/keys/old/personalTLSCertificate.pem");
     sr.tlsKeyPath = Path.of("/home/me/Dokumente/work/keys/old/tls.pem");
     sr.csrPath = Path.of("./keys/new/csr.pem");
     sr.uri =

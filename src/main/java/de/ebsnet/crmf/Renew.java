@@ -73,7 +73,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           OperatorCreationException, CMSException, NoSuchFieldException, IllegalAccessException {
     final var renew = new Renew();
     renew.prevCertificate =
-        Path.of("/home/me/work/tmp/crmf-csr/keys/old/TEN.EMT.MAK_Signature_417.pem");
+        Path.of("/home/me/work/tmp/crmf-csr/keys/old/ownSignatureCertificate.pem");
     renew.darzCertificate = Path.of("/home/me/Dokumente/work/keys/old/DARZ-Test.CA-SN4-2022.pem");
     renew.prevKeyPair = Path.of("/home/me/work/tmp/crmf-csr/keys/old/sig.key");
     renew.encPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/enc.key");
