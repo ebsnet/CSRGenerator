@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import picocli.CommandLine;
 
+@SuppressWarnings("PMD.UseProperClassLoader") // TODO
 public final class VersionProvider implements CommandLine.IVersionProvider {
   @Override
   public String[] getVersion() {
@@ -15,9 +16,10 @@ public final class VersionProvider implements CommandLine.IVersionProvider {
 
     static {
       String version;
-      try (var in = CSRGenerator.class.getClassLoader().getResourceAsStream("version.properties")) {
+      try (var stream =
+          CSRGenerator.class.getClassLoader().getResourceAsStream("version.properties")) {
         final var prop = new Properties();
-        prop.load(in);
+        prop.load(stream);
         version = prop.getProperty("version", "0.0.0");
       } catch (final IOException ex) {
         version = "-0.0.0";

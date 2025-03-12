@@ -42,6 +42,10 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import picocli.CommandLine.Option;
 
 @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
+@SuppressWarnings({
+  "PMD.ExcessiveImports",
+  "PMD.AbstractClassWithoutAbstractMethod",
+})
 public abstract class BaseCommand {
   protected static final String SIGNATURE_ALGORITHM = "SHA384withECDSA";
   // start with random positive ID and ensure we can increment without overflowing
@@ -126,7 +130,7 @@ public abstract class BaseCommand {
   /**
    * Generate CSR for a single keypair.
    *
-   * @param kp
+   * @param keyPair
    * @param type
    * @param subject
    * @param uri
@@ -137,17 +141,17 @@ public abstract class BaseCommand {
    * @throws CRMFException
    */
   protected static CertificateRequestMessage certReqMsg(
-      final KeyPair kp,
+      final KeyPair keyPair,
       final KeyType type,
       final X500Name subject,
-      //      final Optional<X500Name> issuer,
+      // final Optional<X500Name> issuer,
       final URI uri,
       final String email,
       final AttributeTypeAndValue... regInfo)
       throws IOException, OperatorCreationException, CRMFException {
     final var san = subjectAlternativeNames(type, uri, email);
 
-    final var pubKeyInfo = SubjectPublicKeyInfo.getInstance(kp.getPublic().getEncoded());
+    final var pubKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());
     final var extUtil =
         new X509ExtensionUtils(
             new BcDigestCalculatorProvider()
@@ -166,26 +170,28 @@ public abstract class BaseCommand {
             .setProofOfPossessionSigningKeySigner(
                 new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                    .build(kp.getPrivate()));
+                    .build(keyPair.getPrivate()));
 
     final var eku = type.extendedKeyUsage();
     if (eku.isPresent()) {
       builder.addExtension(Extension.extendedKeyUsage, true, eku.get());
     }
 
-    //    final var ext = new ArrayList<Extension>();
-    //    ext.add(new Extension(Extension.keyUsage, true, type.keyUsage().getEncoded()));
-    //    final var exts = new Extensions(ext.toArray(new Extension[0]));
-    //    final var ctb = new CertTemplateBuilder().setPublicKey(pubKeyInfo).setSubject(subject)
-    //      .addExtension(
-    //        Extension.subjectKeyIdentifier,
-    //        false,
-    //        extUtil.createSubjectKeyIdentifier(pubKeyInfo))
-    //      .addExtension(Extension.keyUsage, true, type.keyUsage())
-    //      .addExtension(Extension.subjectAlternativeName, true, san)
-    //      .setRegInfo(regInfo);
+    // final var ext = new ArrayList<Extension>();
+    // ext.add(new Extension(Extension.keyUsage, true,
+    // type.keyUsage().getEncoded()));
+    // final var exts = new Extensions(ext.toArray(new Extension[0]));
+    // final var ctb = new
+    // CertTemplateBuilder().setPublicKey(pubKeyInfo).setSubject(subject)
+    // .addExtension(
+    // Extension.subjectKeyIdentifier,
+    // false,
+    // extUtil.createSubjectKeyIdentifier(pubKeyInfo))
+    // .addExtension(Extension.keyUsage, true, type.keyUsage())
+    // .addExtension(Extension.subjectAlternativeName, true, san)
+    // .setRegInfo(regInfo);
 
-    //    final var x = ctb.build();
+    // final var x = ctb.build();
 
     return builder.build();
   }

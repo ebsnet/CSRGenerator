@@ -76,11 +76,12 @@ public final class PEM2PKCS12 implements Callable<Void> {
 
     keyStore.setKeyEntry(
         this.alias, keyPair.getPrivate(), this.keyStorePass, chain.toArray(new X509Certificate[0]));
-    //    final var entry =
-    //        new KeyStore.PrivateKeyEntry(
-    //            keyPair.getPrivate(), chain.toArray(chain.toArray(new X509Certificate[0])));
-    //    final var protectionParams = new KeyStore.PasswordProtection(this.keyStorePass);
-    //    keyStore.setEntry(this.alias, entry, protectionParams);
+    // final var entry =
+    // new KeyStore.PrivateKeyEntry(
+    // keyPair.getPrivate(), chain.toArray(chain.toArray(new X509Certificate[0])));
+    // final var protectionParams = new
+    // KeyStore.PasswordProtection(this.keyStorePass);
+    // keyStore.setEntry(this.alias, entry, protectionParams);
 
     try (var outStream = Files.newOutputStream(this.out, StandardOpenOption.CREATE_NEW)) {
       keyStore.store(outStream, this.keyStorePass);
@@ -88,7 +89,7 @@ public final class PEM2PKCS12 implements Callable<Void> {
     return null;
   }
 
-  private static KeyStore loadKeyStore(final Path path, final char[] pass)
+  private static KeyStore loadKeyStore(final Path path, final char... pass)
       throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException,
           NoSuchProviderException {
     final var keyStore = KeyStore.getInstance("PKCS12", BouncyCastleProvider.PROVIDER_NAME);
@@ -103,13 +104,13 @@ public final class PEM2PKCS12 implements Callable<Void> {
   }
 
   public static KeyStore pemToPKCS12(
-      final Path key, final Path cert, final String alias, final char[] pass)
+      final Path key, final Path cert, final String alias, final char... pass)
       throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException,
           NoSuchProviderException {
     final var keyPair = BaseCommand.loadKeyPair(key);
     final var certificate = BaseCommand.loadCertificateChain(cert);
-    final var ks = loadKeyStore(null, pass);
-    ks.setKeyEntry(alias, keyPair.getPrivate(), "123456".toCharArray(), certificate);
-    return ks;
+    final var keyStore = loadKeyStore(null, pass);
+    keyStore.setKeyEntry(alias, keyPair.getPrivate(), "123456".toCharArray(), certificate);
+    return keyStore;
   }
 }

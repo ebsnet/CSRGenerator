@@ -44,14 +44,16 @@ import picocli.CommandLine.Option;
     name = "renew",
     mixinStandardHelpOptions = true,
     description = "Generate a Request for Renewal")
+@SuppressWarnings("PMD.ExcessiveImports")
 public final class Renew extends BaseCommand implements Callable<Void> {
-  // we initialize here to, in case we are testing from a main method inside this class
+  // we initialize here to, in case we are testing from a main method inside this
+  // class
   static {
     CSRGenerator.init();
   }
 
   private static final int OFFSET_CONTENT_TYPE = 2;
-  //  private static final int OFFSET_E_CONTENT_TYPE = 37;
+  // private static final int OFFSET_E_CONTENT_TYPE = 37;
 
   @Option(
       names = {"--previous-keypair"},
@@ -144,7 +146,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   private static CMSSignedData outerSignature(
-      final KeyPair kp, final X509Certificate[] chain, final PKIMessage csr)
+      final KeyPair keyPair, final X509Certificate[] chain, final PKIMessage csr)
       throws OperatorCreationException, GeneralSecurityException, CMSException, IOException {
     final var gen = new CMSSignedDataGenerator();
     final var signedAttributes = new ASN1EncodableVector();
@@ -155,7 +157,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     final var signer =
         new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
             .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-            .build(kp.getPrivate());
+            .build(keyPair.getPrivate());
     gen.addSignerInfoGenerator(
         new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder()
