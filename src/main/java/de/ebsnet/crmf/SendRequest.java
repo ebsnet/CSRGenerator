@@ -35,8 +35,10 @@ import uri.bsi_bund_de.smart_meter_pki_protocol._1.RequestCertificateReq;
 import uri.bsi_bund_de.smart_meter_pki_protocol._1_3.SmartMeterService;
 
 @Command(name = "send", mixinStandardHelpOptions = true, description = "Send a Request for Renewal")
+@SuppressWarnings("PMD.ExcessiveImports")
 public final class SendRequest implements Callable<Void> {
-  // we initialize here to, in case we are testing from a main method inside this class
+  // we initialize here to, in case we are testing from a main method inside this
+  // class
   static {
     CSRGenerator.init();
   }
@@ -89,35 +91,37 @@ public final class SendRequest implements Callable<Void> {
       throws NoSuchAlgorithmException, NoSuchProviderException, IOException, CertificateException,
           KeyStoreException, UnrecoverableKeyException, KeyManagementException {
     final var pwd = Utils.randomPwd();
-    final var sc = SSLContext.getInstance("TLSv1.2", "BCJSSE");
-    final var ks = PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsCertPath, "tls", pwd);
+    final var sslContext = SSLContext.getInstance("TLSv1.2", "BCJSSE");
+    final var keyStore = PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsCertPath, "tls", pwd);
 
     final var kmf = KeyManagerFactory.getInstance("PKIX", "BCJSSE");
 
-    kmf.init(ks, pwd);
+    kmf.init(keyStore, pwd);
 
-    sc.init(kmf.getKeyManagers(), new TrustManager[] {new TrustAll()}, null);
+    sslContext.init(kmf.getKeyManagers(), new TrustManager[] {new TrustAll()}, null);
 
-    return sc;
+    return sslContext;
   }
 
   @Override
+  @SuppressWarnings("PMD.SystemPrintln")
   public Void call()
       throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
           KeyStoreException, NoSuchProviderException, KeyManagementException, InterruptedException {
     try {
-      final var sc = sslContext();
+      final var sslContext = sslContext();
 
       final var csr = Files.readAllBytes(this.csrPath);
 
-      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+      HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
       final var url = new URL(this.uri.toString());
       final var service = new SmartMeterService();
       final var port = service.getSmartMeterServicePort();
 
       final var context = ((BindingProvider) port).getRequestContext();
       context.put(
-          "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory", sc.getSocketFactory());
+          "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory",
+          sslContext.getSocketFactory());
       context.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
 
       ((WSBindingProvider) port).setOutboundHeaders(Headers.create(new QName("certType"), "EMT"));

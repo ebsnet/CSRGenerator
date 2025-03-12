@@ -17,18 +17,18 @@ buildscript {
 plugins {
   id 'application'
   // auto format source files
-  id 'com.diffplug.spotless' version '6.25.0'
+  id 'com.diffplug.spotless' version '7.0.2'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.0.16'
+  id 'com.github.spotbugs' version '6.1.7'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
   id 'maven-publish'
   // some lints for dependencies
-  id 'nebula.lint' version '17.8.0'
+  id 'nebula.lint' version '20.5.6'
   // resolve git branch name
-  id 'org.ajoberstar.grgit' version '5.2.2'
+  id 'org.ajoberstar.grgit' version '5.3.0'
 
   id "com.github.bjornvester.wsdl2java" version "1.2"
 }
@@ -81,9 +81,11 @@ tasks.findAll { (it.group == 'build') } . each {
   }
 }
 
-// use Java 11
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+java {
+  // use Java 11
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
 
 // dependency lints
 gradleLint {
@@ -91,8 +93,11 @@ gradleLint {
   rules = ['all-dependency']
   // fail the build if unused dependencies are defined
   criticalRules = ['unused-dependency']
+
   // do not run linter when the build fails
-  gradleLint.autoLintAfterFailure = false
+  // TODO: not compatible with Gradle > 7.6
+  // gradleLint.autoLintAfterFailure = false
+
   // do not run linter on task publish
   skipForTask('publish')
   // skip linter on IntelliJ init task
@@ -145,8 +150,7 @@ pmd {
 }
 
 def versions = [
-  bc: '1.78',
-  ws: '2.3.3'
+  bc: '1.80',
 ]
 
 dependencies {
@@ -161,12 +165,12 @@ dependencies {
 
   implementation 'info.picocli:picocli:4.7.6'
 
-  implementation "com.sun.xml.ws:jaxws-ri:${versions.ws}"
-  implementation "jakarta.xml.bind:jakarta.xml.bind-api:${versions.ws}"
+  implementation "com.sun.xml.ws:jaxws-ri:2.3.7"
+  implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3"
   // implementation 'com.sun.xml.ws:rt:2.3.1'
   // implementation 'javax.xml.bind:jaxb-api:2.3.1'
-  implementation "jakarta.xml.ws:jakarta.xml.ws-api:${versions.ws}"
-  implementation "com.sun.xml.ws:jaxws-rt:${versions.ws}"
+  implementation "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3"
+  implementation "com.sun.xml.ws:jaxws-rt:2.3.7"
   implementation 'javax.xml.ws:jaxws-api:2.3.1'
 
   implementation 'javax.xml.bind:jaxb-api:2.3.1'
@@ -221,7 +225,7 @@ processResources {
 
 application {
   // Define the main class for the application.
-  mainClassName = 'de.ebsnet.crmf.CSRGenerator'
+  mainClass = 'de.ebsnet.crmf.CSRGenerator'
 }
 
 wsdl2java {
