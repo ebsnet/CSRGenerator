@@ -86,7 +86,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
 
   @SuppressWarnings("PMD.UseVarargs")
   static <T> T[] concatWithArrayCopy(final T[] array1, final T[] array2) {
-    /* Certifiates */ final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
+    /* default */ final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
     System.arraycopy(array2, 0, result, array1.length, array2.length);
     return result;
   }
