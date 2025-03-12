@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  tests:
+    uses: ebsnet/CSRGenerator/.github/workflows/build.yml@master
+
+  publish:
+    name: Publish build artifacts
+    needs: [tests]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Build
+        run: ./gradlew build
+      - name: Upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/distributions/CSRGenerator-*.tar
+            build/distributions/CSRGenerator-*.zip
+
+  changelog:
+    name: Update Changelog
+    needs: [tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          changelog: CHANGELOG.md
+          token: ${{ secrets.GITHUB_TOKEN }}
