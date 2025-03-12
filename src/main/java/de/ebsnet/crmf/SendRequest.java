@@ -75,14 +75,13 @@ public final class SendRequest implements Callable<Void> {
       throws UnrecoverableKeyException, CertificateException, IOException, NoSuchAlgorithmException,
           KeyStoreException, NoSuchProviderException, InterruptedException, KeyManagementException {
     final var sr = new SendRequest();
-    sr.tlsCertPath = Path.of("./keys/old/TEN.EMT.MAK_TLS_417.pem");
-    sr.tlsKeyPath = Path.of("./keys/old/tls.key");
-    //    sr.csrPath = Path.of("./keys/new/csr.pem");
-    sr.csrPath = Path.of("./csr4.pem");
+    sr.tlsCertPath = Path.of("/home/me/Dokumente/work/keys/old/EBSnet.EMT.MAK_TLS_539.pem");
+    sr.tlsKeyPath = Path.of("/home/me/Dokumente/work/keys/old/tls.pem");
+    sr.csrPath = Path.of("./keys/new/csr.pem");
     sr.uri =
         //      URI.create("http://localhost:8080");
         URI.create("https://test.sub-ca.da-rz.net:8443/metering-ca/services/SmartMeterService");
-    sr.out = Path.of("./res.txt");
+    sr.out = Path.of("/home/me/Dokumente/work");
     sr.call();
   }
 

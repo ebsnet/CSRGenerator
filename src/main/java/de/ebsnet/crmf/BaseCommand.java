@@ -56,8 +56,7 @@ public abstract class BaseCommand {
   protected static final String RDN_STREET = "STREET";
   protected static final String RDN_ST = "ST";
   protected static final String RDN_PC = "2.5.4.17"; // NOPMD: not an IP address
-  protected static final Set<String> RDNS =
-      Set.of(RDN_CN, RDN_O, RDN_OU, RDN_C, RDN_L, RDN_STREET, RDN_ST, RDN_PC);
+  protected static final Set<String> RDNS = Set.of(RDN_CN, RDN_O, RDN_OU, RDN_C, RDN_L, RDN_PC);
 
   @Option(
       names = {"--encryption"},
