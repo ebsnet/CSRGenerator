@@ -60,3 +60,8 @@ First generate 3 Brainpool keys for signature, encryption and TLS.
       the BouncyCastle dependencies
 - [ ] Create PEM encoded CSR so we don't have to convert by hand. This is more
       or less a simple Base64 encoding of the CSR, with fixed line length.
+
+## License
+
+This project is licensed under the GNU AGPLv3 license. The license text can be
+found [here](./LICENSE).
