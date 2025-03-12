@@ -115,9 +115,9 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     final var tlsCrmf = certReqMsg(tlsKp, KeyType.TLS, filteredSubject, uri, email);
 
     final var crmf = merge(tlsCrmf, encCrmf, sigCrmf);
-    final var pkiMsg = wrap(crmf, false);
+    final var pkiMsg = wrap(crmf, true);
 
-    final var renewalCsr = outerSignature(prevKp, allCerts, dartCerts, pkiMsg);
+    final var renewalCsr = outerSignature(prevKp, allCerts, pkiMsg);
     final var csr = renewalCsr.getEncoded();
     var offsetContentType = OFFSET_CONTENT_TYPE;
     for (final var content : SignedCSRData.CONTENT_TYPE.getEncoded()) {
@@ -143,10 +143,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   private static CMSSignedData outerSignature(
-      final KeyPair kp,
-      final X509Certificate[] chain,
-      final X509Certificate[] darzChain,
-      final PKIMessage csr)
+      final KeyPair kp, final X509Certificate[] chain, final PKIMessage csr)
       throws OperatorCreationException, GeneralSecurityException, CMSException, IOException {
     final var gen = new CMSSignedDataGenerator();
     final var signedAttributes = new ASN1EncodableVector();
@@ -166,14 +163,6 @@ public final class Renew extends BaseCommand implements Callable<Void> {
             .setSignedAttributeGenerator(
                 new DefaultSignedAttributeTableGenerator(signedAttributesTable))
             .build(signer, chain[0]));
-    gen.addSignerInfoGenerator(
-        new JcaSignerInfoGeneratorBuilder(
-                new JcaDigestCalculatorProviderBuilder()
-                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                    .build())
-            .setSignedAttributeGenerator(
-                new DefaultSignedAttributeTableGenerator(signedAttributesTable))
-            .build(signer, darzChain[0]));
 
     final var certStore = new JcaCertStore(List.of(chain));
     gen.addCertificates(certStore);
