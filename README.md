@@ -1,5 +1,7 @@
 # EBSnet CSRGenerator
 
+[![Build](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml/badge.svg)](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml)
+
 This is a tool to generate CSRs for the SM-PKI.
 
 This tool is developed and published by [EBSnet | eEnergy Software
