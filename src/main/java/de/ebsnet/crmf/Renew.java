@@ -73,7 +73,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           OperatorCreationException, CMSException, NoSuchFieldException, IllegalAccessException {
     final var renew = new Renew();
     renew.prevCertificate =
-        Path.of("/home/me/work/tmp/crmf-csr/keys/old/ownSignatureCertificate.pem");
+        Path.of("/home/me/work/tmp/crmf-csr/keys/old/personalSignatureCertificate.pem");
     renew.darzCertificate = Path.of("/home/me/Dokumente/work/keys/old/DARZ-Test.CA-SN4-2022.pem");
     renew.prevKeyPair = Path.of("/home/me/work/tmp/crmf-csr/keys/old/sig.key");
     renew.encPath = Path.of("/home/me/work/tmp/crmf-csr/keys/new/enc.key");
@@ -82,8 +82,9 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     renew.out = Path.of("/home/me/work/tmp/crmf-csr/csr4.pem");
   }
 
+  @SuppressWarnings("PMD.UseVarargs")
   static <T> T[] concatWithArrayCopy(final T[] array1, final T[] array2) {
-    final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
+    /* Certifiates */ final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
     System.arraycopy(array2, 0, result, array1.length, array2.length);
     return result;
   }
