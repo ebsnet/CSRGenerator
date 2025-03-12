@@ -82,8 +82,8 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     renew.out = Path.of("/home/me/work/tmp/crmf-csr/csr4.pem");
   }
 
-  static <T> T[] concatWithArrayCopy(T[] array1, T[] array2) {
-    T[] result = Arrays.copyOf(array1, array1.length + array2.length);
+  static <T> T[] concatWithArrayCopy(final T[] array1, final T[] array2) {
+    final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
     System.arraycopy(array2, 0, result, array1.length, array2.length);
     return result;
   }
