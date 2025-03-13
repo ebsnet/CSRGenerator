@@ -22,6 +22,4 @@ jobs:
           java-version: 17
           cache: 'gradle'
       - name: Formatting and lint check
-        run: ./gradlew spotlessCheck check javadoc
-      - name: Build
-        run: ./gradlew build
+        run: ./gradlew spotlessCheck test check javadoc
