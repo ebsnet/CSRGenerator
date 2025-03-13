@@ -2,7 +2,8 @@
 
 [![Build](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml/badge.svg)](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml)
 
-This is a tool to generate CSRs for the SM-PKI.
+This is a tool to generate CSRs for the [Smart Metering
+PKI](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Smart-metering/Smart-Meterin-PKI/smart-meterin-pki_node.html).
 
 This tool is developed and published by [EBSnet | eEnergy Software
 GmbH](https://www.ebsnet.de).
