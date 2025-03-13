@@ -5,8 +5,22 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
-    assignees:
-      - vbrandl
+    labels:
+      - dependabot
+      - dependencies
+    groups:
+      minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: 'gradle'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 10
     labels:
       - dependabot
       - dependencies
