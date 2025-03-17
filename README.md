@@ -1,9 +1,14 @@
 # EBSnet CSRGenerator
 
-[![Build](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml/badge.svg)](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml)
+[![Build Status](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml/badge.svg)](https://github.com/vbrandl/CSRGenerator/actions/workflows/build.yml)
 
 This is a tool to generate CSRs for the [Smart Metering
 PKI](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Smart-metering/Smart-Meterin-PKI/smart-meterin-pki_node.html).
+
+Especially the certificate triplets for AS4 on the German energy market are not
+straight forward. They don't use the same CSRs as e.g. S/MIME certificates. This
+tool helps generating requests for SM-PKI certificate triplets and hopefully
+speed up on boarding for new market participants.
 
 This tool is developed and published by [EBSnet | eEnergy Software
 GmbH](https://www.ebsnet.de).
@@ -43,11 +48,24 @@ There is a hosted version unter [lapo.it/asn1js/](https://lapo.it/asn1js/)
 
 ## Usage
 
+Compiled artifacts of this tool can be found on the [releases
+page](https://github.com/ebsnet/CSRGenerator/releases/latest). Just download the
+archive to your liking, extract and execute.
+
 First generate 3 Brainpool keys for signature, encryption and TLS.
 
 ```
 ./bin/CSRGenerator initial --encryption enc.key --signature sig.key --tls tls.key --name example --gln 1234 --out init.pem --uri https://example.com/foo --email foo@example.com
 ```
+
+Executing `CSRGenerator` requires at least Java 11.
+
+## Compiling
+
+Compiling from source requires at least Java JDK 11.
+
+`CSRGenerator` uses the [Gradle build tool](https://gradle.org/) so you can
+compile the tool by invoking `./gradlew build`.
 
 ## Missing Features (Contributions are Welcome)
 
