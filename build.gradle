@@ -124,7 +124,7 @@ dependencies {
   implementation "org.bouncycastle:bctls-jdk18on:${versions.bc}"
   implementation "org.bouncycastle:bcutil-jdk18on:${versions.bc}"
 
-  implementation 'info.picocli:picocli:4.7.6'
+  implementation 'info.picocli:picocli:4.7.7'
 
   implementation "com.sun.xml.ws:jaxws-ri:2.3.7"
   implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3"
@@ -137,7 +137,7 @@ dependencies {
   implementation 'javax.xml.soap:javax.xml.soap-api:1.4.0'
 
   // additional spotbugs detectors
-  spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0'
+  spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
   // TODO activate and fix warnings
   // spotbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:7.4.7'// EXPERIMENTAL
   // provides annotations to suppress spotbugs warnings
