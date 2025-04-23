@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `com.h3xstream.findsecbugs:findsecbugs-plugin` from 1.13.0 to 1.14.0 ([#8](https://github.com/ebsnet/CSRGenerator/pull/8))
 - Bump `com.github.spotbugs` from 6.1.7 to 6.1.9 ([#9](https://github.com/ebsnet/CSRGenerator/pull/9))
 - Bump `com.h3xstream.findsecbugs:findsecbugs-plugin` from 1.13.0 to 1.14.0 ([#8](https://github.com/ebsnet/CSRGenerator/pull/8))
+- Bump `nebula.lint` from 20.5.6 to 20.5.7 ([#10](https://github.com/ebsnet/CSRGenerator/pull/10))
 
 ## [1.0.0] 2025-03-12
 
