@@ -75,6 +75,8 @@ gradleLint {
   // skip linter on IntelliJ init task
   skipForTask('prepareKotlinBuildScriptModel')
   skipForTask('ijDownloadSources')
+  // dependabot breaks sometimes...
+  skipForTask(':ForceDependencyResolutionPlugin_resolveAllDependencies')
 }
 
 // remote repositories for 3rd party dependencies
