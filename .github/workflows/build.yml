@@ -26,10 +26,12 @@ jobs:
       - name: Formatting and lint check
         run: ./gradlew spotlessCheck test check javadoc
       - name: Upload PMD report
+        if: "!cancelled()"
         uses: lcollins/pmd-github-action@v3.1.0
         with:
           path: "./build/reports/pmd/*.xml"
       - name: Upload SpotBugs report
+        if: "!cancelled()"
         uses: lcollins/spotbugs-github-action@v3.1.0
         with:
           path: "./build/reports/spotbugs/*.xml"
