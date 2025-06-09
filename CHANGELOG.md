@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `com.github.spotbugs` from 6.1.13 to 6.2.0 ([#19](https://github.com/ebsnet/CSRGenerator/pull/19))
+
 ## [1.1.0] 2025-06-05
 
 ### Dependencies
