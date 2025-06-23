@@ -1,6 +1,5 @@
 package de.ebsnet.crmf;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -106,9 +105,6 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   @Override
-  @SuppressFBWarnings(
-      value = {"LDAP_INJECTION"},
-      justification = "Not used for LDAP query")
   public Void call()
       throws GeneralSecurityException,
           IOException,
