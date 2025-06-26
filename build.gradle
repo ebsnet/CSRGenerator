@@ -17,7 +17,7 @@ plugins {
   // maven plugin to upload to repository
   id 'maven-publish'
   // some lints for dependencies
-  id 'nebula.lint' version '20.6.2'
+  id 'nebula.lint' version '21.0.0'
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.3.2'
 
