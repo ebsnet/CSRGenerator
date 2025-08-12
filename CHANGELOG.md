@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-- Bump `com.github.spotbugs` from 6.1.13 to 6.2.3 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21), [#22](https://github.com/ebsnet/CSRGenerator/pull/22), [#25](https://github.com/ebsnet/CSRGenerator/pull/25), [#27](https://github.com/ebsnet/CSRGenerator/pull/27))
+- Bump `com.github.spotbugs` from 6.1.13 to 6.2.4 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21), [#22](https://github.com/ebsnet/CSRGenerator/pull/22), [#25](https://github.com/ebsnet/CSRGenerator/pull/25), [#27](https://github.com/ebsnet/CSRGenerator/pull/27), [#28](https://github.com/ebsnet/CSRGenerator/pull/28))
 - Bump `nebula.lint` from 20.6.1 to 20.6.2 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21))
 - Bump `org.ajoberstar.grgit` from 5.3.0 to 5.3.2 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21))
 - Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#20](https://github.com/ebsnet/CSRGenerator/pull/20))
