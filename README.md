@@ -58,11 +58,11 @@ First generate 3 Brainpool keys for signature, encryption and TLS.
 ./bin/CSRGenerator initial --encryption enc.key --signature sig.key --tls tls.key --name example --gln 1234 --out init.pem --uri https://example.com/foo --email foo@example.com
 ```
 
-Executing `CSRGenerator` requires at least Java 11.
+Executing `CSRGenerator` requires at least Java 17.
 
 ## Compiling
 
-Compiling from source requires at least Java JDK 11.
+Compiling from source requires at least Java JDK 17.
 
 `CSRGenerator` uses the [Gradle build tool](https://gradle.org/) so you can
 compile the tool by invoking `./gradlew build`.
