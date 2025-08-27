@@ -131,6 +131,12 @@ dependencies {
   // spotbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:7.4.7'// EXPERIMENTAL
   // provides annotations to suppress spotbugs warnings
   implementation "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
+
+  constraints {
+    wsdl2java("org.apache.cxf:cxf-core:4.1.3") {
+      because("CVE-2024-28752")
+    }
+  }
 }
 
 def latestCommitHash = grgit.head().abbreviatedId
