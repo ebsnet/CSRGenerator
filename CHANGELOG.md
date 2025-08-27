@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `com.sun.xml.ws:jaxws-rt` from 2.3.7 to 4.0.3 ([#4](https://github.com/ebsnet/CSRGenerator/pull/4))
+
 ## [1.2.0] 2025-08-27
 
 ### Changes
