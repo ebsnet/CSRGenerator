@@ -21,7 +21,7 @@ plugins {
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.3.2'
 
-  id "com.github.bjornvester.wsdl2java" version "1.2"
+  id "com.github.bjornvester.wsdl2java" version "2.0.1"
 }
 
 group = 'de.ebsnet'
@@ -83,7 +83,7 @@ repositories {
   mavenCentral()
 }
 
-tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
   reports {
     html.required = true
     xml.required = true
@@ -94,7 +94,7 @@ spotbugs {
   excludeFilter = file('config/spotbugs/exclude.xml')
 }
 
-tasks.withType(Pmd) {
+tasks.withType(Pmd).configureEach {
   reports {
     html.required = true
   }
@@ -119,15 +119,11 @@ dependencies {
 
   implementation 'info.picocli:picocli:4.7.7'
 
-  implementation "com.sun.xml.ws:jaxws-ri:2.3.7"
-  implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3"
-  implementation "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3"
-  implementation "com.sun.xml.ws:jaxws-rt:2.3.7"
-  implementation 'javax.xml.ws:jaxws-api:2.3.1'
-
-  implementation 'javax.xml.bind:jaxb-api:2.3.1'
-  implementation 'jakarta.xml.soap:jakarta.xml.soap-api:1.4.2'
-  implementation 'javax.xml.soap:javax.xml.soap-api:1.4.0'
+  implementation "com.sun.xml.ws:jaxws-ri:4.0.3"
+  implementation "com.sun.xml.ws:jaxws-rt:4.0.3"
+  implementation "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2"
+  implementation "jakarta.xml.soap:jakarta.xml.soap-api:3.0.2"
+  implementation "jakarta.xml.ws:jakarta.xml.ws-api:4.0.2"
 
   // additional spotbugs detectors
   spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
