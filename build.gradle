@@ -119,10 +119,10 @@ dependencies {
 
   implementation 'info.picocli:picocli:4.7.7'
 
-  implementation "com.sun.xml.ws:jaxws-ri:2.3.7"
+  implementation "com.sun.xml.ws:jaxws-ri:4.0.3"
   implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3"
   implementation "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3"
-  implementation "com.sun.xml.ws:jaxws-rt:2.3.7"
+  implementation "com.sun.xml.ws:jaxws-rt:4.0.3"
   implementation 'javax.xml.ws:jaxws-api:2.3.1'
 
   implementation 'javax.xml.bind:jaxb-api:2.3.1'
