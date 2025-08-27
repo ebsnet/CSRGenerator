@@ -5,15 +5,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] 2025-08-27
+
+### Changes
+
+- Use Java 17 ([#33](https://github.com/ebsnet/CSRGenerator/pull/33))
+
 ### Dependencies
+
 - Bump `com.github.spotbugs` from 6.1.13 to 6.2.5 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21), [#22](https://github.com/ebsnet/CSRGenerator/pull/22), [#25](https://github.com/ebsnet/CSRGenerator/pull/25), [#27](https://github.com/ebsnet/CSRGenerator/pull/27), [#28](https://github.com/ebsnet/CSRGenerator/pull/28), [#31](https://github.com/ebsnet/CSRGenerator/pull/31))
-- Bump `nebula.lint` from 20.6.1 to 20.6.2 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21))
+- Bump `nebula.lint` from 20.6.1 to 21.1.1 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21), [#33](https://github.com/ebsnet/CSRGenerator/pull/33))
 - Bump `org.ajoberstar.grgit` from 5.3.0 to 5.3.2 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21))
 - Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#20](https://github.com/ebsnet/CSRGenerator/pull/20))
 - Bump `org.ajoberstar.grgit` from 5.3.0 to 5.3.2 ([#21](https://github.com/ebsnet/CSRGenerator/pull/21))
 - Bump `com.diffplug.spotless` from 7.0.4 to 7.2.1 ([#24](https://github.com/ebsnet/CSRGenerator/pull/24), [#26](https://github.com/ebsnet/CSRGenerator/pull/26))
 - Bump `actions/checkout` from 4 to 5 ([#29](https://github.com/ebsnet/CSRGenerator/pull/29))
 - Bump `actions/setup-java` from 4 to 5 ([#32](https://github.com/ebsnet/CSRGenerator/pull/32))
+- Bump Gradle Wrapper from 8.13 to 9.0.0 ([#33](https://github.com/ebsnet/CSRGenerator/pull/33))
 
 ## [1.1.0] 2025-06-05
 

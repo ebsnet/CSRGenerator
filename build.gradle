@@ -17,7 +17,7 @@ plugins {
   // maven plugin to upload to repository
   id 'maven-publish'
   // some lints for dependencies
-  id 'nebula.lint' version '20.6.2'
+  id 'nebula.lint' version '21.1.1'
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.3.2'
 
@@ -26,7 +26,7 @@ plugins {
 
 group = 'de.ebsnet'
 // version must be set _before_ applying helper.gradle
-version = '1.1.0'
+version = '1.2.0'
 
 dependencyLocking {
   lockAllConfigurations()
@@ -54,9 +54,8 @@ tasks.withType(Javadoc).configureEach {
 }
 
 java {
-  // use Java 11
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
 }
 
 // dependency lints

@@ -20,7 +20,7 @@ public final class CSRGenerator {
   private static final AtomicBoolean IS_INIT = new AtomicBoolean(false);
 
   static {
-    CSRGenerator.init();
+    init();
   }
 
   /**
@@ -60,8 +60,10 @@ public final class CSRGenerator {
           "jdk.tls.namedGroups",
           "brainpoolP256r1, brainpoolP384r1, brainpoolP512r1, brainpoolP256r1tls13, brainpoolP384r1tls13, brainpoolP512r1tls13");
 
+      Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+      Security.insertProviderAt(new BouncyCastleProvider(), 1);
+      Security.removeProvider(BouncyCastleJsseProvider.PROVIDER_NAME);
       Security.insertProviderAt(new BouncyCastleJsseProvider(), 2);
-      Security.insertProviderAt(new BouncyCastleProvider(), 2);
     }
   }
 }

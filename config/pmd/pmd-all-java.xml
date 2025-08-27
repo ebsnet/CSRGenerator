@@ -9,6 +9,7 @@
   <rule ref="category/java/bestpractices.xml" />
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor" />
+    <exclude name="UseExplicitTypes" />
   </rule>
   <rule ref="category/java/codestyle.xml/LongVariable">
     <properties>
