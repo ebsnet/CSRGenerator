@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `jakarta.xml.soap:jakarta.xml.soap-api` from 1.4.2 to 3.0.2 ([#6](https://github.com/ebsnet/CSRGenerator/pull/6))
+
 ## [1.2.0] 2025-08-27
 
 ### Changes
