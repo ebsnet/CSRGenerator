@@ -23,7 +23,7 @@ final class BSIPKIHeader extends PKIHeader {
 
   public BSIPKIHeader() {
     // this is more or less a noop
-    super(PKIHeader.CMP_2000, PKIHeader.NULL_NAME, PKIHeader.NULL_NAME);
+    super(CMP_2000, NULL_NAME, NULL_NAME);
   }
 
   @Override

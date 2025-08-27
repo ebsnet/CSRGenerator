@@ -21,15 +21,10 @@ public enum KeyType {
    * @return
    */
   public KeyUsage keyUsage() {
-    switch (this) {
-      case ENC:
-        return new KeyUsage(KeyUsage.keyAgreement | KeyUsage.keyEncipherment);
-      case SIG:
-      case TLS:
-        return new KeyUsage(KeyUsage.digitalSignature);
-      default:
-        throw new UnsupportedOperationException("unreachable... switched on " + this);
-    }
+    return switch (this) {
+      case ENC -> new KeyUsage(KeyUsage.keyAgreement | KeyUsage.keyEncipherment);
+      case SIG, TLS -> new KeyUsage(KeyUsage.digitalSignature);
+    };
   }
 
   /**
@@ -38,16 +33,14 @@ public enum KeyType {
    * @return
    */
   public Optional<ExtendedKeyUsage> extendedKeyUsage() {
-    switch (this) {
-      case TLS:
-        return Optional.of(
-            new ExtendedKeyUsage(
-                new KeyPurposeId[] {KeyPurposeId.id_kp_serverAuth, KeyPurposeId.id_kp_clientAuth}));
-      case ENC:
-      case SIG:
-        return Optional.empty();
-      default:
-        throw new UnsupportedOperationException("unreachable... switched on " + this);
-    }
+    return switch (this) {
+      case TLS ->
+          Optional.of(
+              new ExtendedKeyUsage(
+                  new KeyPurposeId[] {
+                    KeyPurposeId.id_kp_serverAuth, KeyPurposeId.id_kp_clientAuth
+                  }));
+      case ENC, SIG -> Optional.empty();
+    };
   }
 }
