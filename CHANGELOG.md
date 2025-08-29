@@ -6,12 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-
 - Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 2.3.3 to 4.0.2 ([#1](https://github.com/ebsnet/CSRGenerator/pull/1), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 2.3.3 to 4.0.2 ([#2](https://github.com/ebsnet/CSRGenerator/pull/2), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `com.github.bjornvester.wsdl2java` from 1.2 to 2.0.2 ([#3](https://github.com/ebsnet/CSRGenerator/pull/3), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `com.sun.xml.ws:jaxws-rt` from 2.3.7 to 4.0.3 ([#4](https://github.com/ebsnet/CSRGenerator/pull/4), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `com.sun.xml.ws:jaxws-ri` from 2.3.7 to 4.0.3 ([#5](https://github.com/ebsnet/CSRGenerator/pull/5), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
+- Bump `jakarta.xml.soap:jakarta.xml.soap-api` from 1.4.2 to 3.0.2 ([#6](https://github.com/ebsnet/CSRGenerator/pull/6), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
+- Bump `com.github.spotbugs` from 6.2.5 to 6.2.6 ([#36](https://github.com/ebsnet/CSRGenerator/pull/36))
 - Bump `jakarta.xml.soap:jakarta.xml.soap-api` from 1.4.2 to 3.0.2 ([#6](https://github.com/ebsnet/CSRGenerator/pull/6), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 
 ## [1.2.0] 2025-08-27
