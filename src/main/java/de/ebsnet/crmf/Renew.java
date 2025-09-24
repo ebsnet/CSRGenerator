@@ -1,5 +1,6 @@
 package de.ebsnet.crmf;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -77,6 +78,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
 
   private Path trustChain;
 
+  @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
   public static void main(final String[] args)
       throws InvalidNameException,
           CRMFException,
