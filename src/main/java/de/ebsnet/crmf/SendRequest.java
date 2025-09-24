@@ -79,6 +79,7 @@ public final class SendRequest implements Callable<Void> {
       description = "Webservice URI")
   private URI uri;
 
+  @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
   public static void main(final String[] args)
       throws UnrecoverableKeyException,
           CertificateException,
