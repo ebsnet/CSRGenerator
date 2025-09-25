@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `org.bouncycastle:bcprov-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bctls-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bcutil-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
+- Bump `nebula.lint` from 21.1.1 to 21.1.2 ([#42](https://github.com/ebsnet/CSRGenerator/pull/42))
 
 ## [1.2.0] 2025-08-27
 
