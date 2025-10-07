@@ -128,7 +128,7 @@ public final class Initial extends BaseCommand implements Callable<Void> {
         CSRUtil.certReqMsg(
             keyPairs.signature(), KeyType.TLS, subject, metadata.uri(), metadata.email());
 
-    return CSRUtil.merge(sigCrmf, encCrmf, tlsCrmf);
+    return CSRUtil.buildCertificateRequestMessages(sigCrmf, encCrmf, tlsCrmf);
   }
 
   /**

@@ -66,21 +66,16 @@ public final class CSRUtil {
    * @param messages
    * @return
    */
-  public static CertificateReqMessages merge(final CertificateRequestMessage... messages) {
+  public static CertificateReqMessages buildCertificateRequestMessages(final CertificateRequestMessage... messages) {
     final var builder = new CertificateReqMessagesBuilder();
     for (final var message : messages) {
       builder.addRequest(message);
     }
     return builder.build();
-    //    return new CertificateReqMessages(
-    //        new CertReqMessages(
-    //            Stream.of(messages)
-    //                .map(CertificateRequestMessage::toASN1Structure)
-    //                .toArray(CertReqMsg[]::new)));
   }
 
   /**
-   * Wrap the {@code CertReqMessages} in a {@link PKIMessage}
+   * Wrap the {@code CertificateReqMessages} in a {@link PKIMessage}
    *
    * @param messages
    * @return
