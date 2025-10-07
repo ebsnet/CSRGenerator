@@ -66,7 +66,8 @@ public final class CSRUtil {
    * @param messages
    * @return
    */
-  public static CertificateReqMessages buildCertificateRequestMessages(final CertificateRequestMessage... messages) {
+  public static CertificateReqMessages buildCertificateRequestMessages(
+      final CertificateRequestMessage... messages) {
     final var builder = new CertificateReqMessagesBuilder();
     for (final var message : messages) {
       builder.addRequest(message);
