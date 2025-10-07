@@ -8,7 +8,7 @@ buildscript {
 plugins {
   id 'application'
   // auto format source files
-  id 'com.diffplug.spotless' version '7.2.1'
+  id 'com.diffplug.spotless' version '8.0.0'
   // analyze code and find potential bugs
   id 'pmd'
   id 'com.github.spotbugs' version '6.4.2'
@@ -34,7 +34,8 @@ dependencyLocking {
 
 spotless {
   java {
-    googleJavaFormat('1.24.0')
+    forbidWildcardImports()
+    googleJavaFormat()
   }
 }
 

@@ -14,7 +14,12 @@ import picocli.CommandLine.Command;
     versionProvider = VersionProvider.class,
     description = "Create SM PKI Compatible CSRs",
     // TODO: enable subcommands once they work
-    subcommands = {Initial.class, PEM2PKCS12.class /* , Renew.class, SendRequest.class */})
+    subcommands = {
+      Initial.class,
+      PEM2PKCS12.class,
+      Renew.class,
+      SendRequest.class,
+    })
 @SuppressWarnings("PMD.UseUtilityClass")
 public final class CSRGenerator {
   private static final AtomicBoolean IS_INIT = new AtomicBoolean(false);

@@ -1,5 +1,7 @@
 package de.ebsnet.crmf;
 
+import de.ebsnet.crmf.data.CSRMetadata;
+import de.ebsnet.crmf.data.Triple;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -12,10 +14,9 @@ import java.security.NoSuchProviderException;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.cmp.PKIMessage;
 import org.bouncycastle.cert.crmf.CRMFException;
+import org.bouncycastle.cert.crmf.CertificateReqMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import picocli.CommandLine.Command;
@@ -83,34 +84,51 @@ public final class Initial extends BaseCommand implements Callable<Void> {
 
   @Override
   public Void call() throws CRMFException, IOException, OperatorCreationException {
-    final var normalizedName = this.name.contains(".EMT.MAK") ? this.name : this.name + ".EMT.MAK";
-    final var dirName =
-        Stream.of(
-                Optional.of(normalizedName).map(cn -> RDN_CN + "=" + cn),
-                Optional.of(this.pki).map(o -> RDN_O + "=" + o),
-                Optional.of(this.gln).map(ou -> RDN_OU + "=" + ou),
-                Optional.of(this.country).map(c -> RDN_C + "=" + c),
-                this.city.map(c -> RDN_L + "=" + c),
-                this.street.map(s -> RDN_STREET + "=" + s),
-                this.state.map(st -> RDN_ST + "=" + st),
-                this.postalCode.map(pc -> RDN_PC + "=" + pc))
-            .flatMap(Optional::stream)
-            .collect(Collectors.joining(","));
-    final var subject = new X500Name(dirName);
+    final var keyPairs =
+        new Triple<>(
+            loadKeyPair(this.encPath), loadKeyPair(this.sigPath), loadKeyPair(this.tlsPath));
+    final var metadata =
+        new CSRMetadata(
+            this.name,
+            this.gln,
+            this.uri,
+            this.email,
+            this.pki,
+            this.country,
+            this.state,
+            this.city,
+            this.postalCode,
+            this.street);
 
-    final var sigKp = loadKeyPair(this.sigPath);
-    final var sigCrmf = certReqMsg(sigKp, KeyType.SIG, subject, this.uri, this.email);
+    final var pkiMsg = generateCSR(keyPairs, metadata);
 
-    final var encKp = loadKeyPair(this.encPath);
-    final var encCrmf = certReqMsg(encKp, KeyType.ENC, subject, this.uri, this.email);
-
-    final var tlsKp = loadKeyPair(this.tlsPath);
-    final var tlsCrmf = certReqMsg(tlsKp, KeyType.TLS, subject, this.uri, this.email);
-
-    final var crmf = merge(tlsCrmf, encCrmf, sigCrmf);
-    final var pkiMsg = wrap(crmf);
     Files.write(this.out, pkiMsg.getEncoded(), StandardOpenOption.CREATE_NEW);
     return null;
+  }
+
+  public static PKIMessage generateCSR(final Triple<KeyPair> keyPairs, final CSRMetadata metadata)
+      throws CRMFException, IOException, OperatorCreationException {
+    return CSRUtil.asPKIMessage(generateCertReqMessages(keyPairs, metadata));
+  }
+
+  public static CertificateReqMessages generateCertReqMessages(
+      final Triple<KeyPair> keyPairs, final CSRMetadata metadata)
+      throws CRMFException, IOException, OperatorCreationException {
+    final var subject = metadata.toSubject();
+
+    final var sigCrmf =
+        CSRUtil.certReqMsg(
+            keyPairs.signature(), KeyType.SIG, subject, metadata.uri(), metadata.email());
+
+    final var encCrmf =
+        CSRUtil.certReqMsg(
+            keyPairs.signature(), KeyType.ENC, subject, metadata.uri(), metadata.email());
+
+    final var tlsCrmf =
+        CSRUtil.certReqMsg(
+            keyPairs.signature(), KeyType.TLS, subject, metadata.uri(), metadata.email());
+
+    return CSRUtil.merge(sigCrmf, encCrmf, tlsCrmf);
   }
 
   /**
