@@ -14,18 +14,19 @@ import org.bouncycastle.operator.OperatorCreationException;
  * {@link InputDecryptorProvider} that uses an {@link Optional} password or asks the user to enter
  * the password.
  */
-public class OptionalInteractiveDecryptorProvider implements InputDecryptorProvider {
+public class OptionalInteractiveDecryptorProvider
+    implements InputDecryptorProvider, InteractivePasswordProvider {
   private final Optional<char[]> pass;
-  private final InteractivePasswordProvider passwordProvider;
+  private final Path path;
 
   public OptionalInteractiveDecryptorProvider(final Optional<char[]> pass, final Path path) {
     this.pass = Objects.requireNonNull(pass);
-    this.passwordProvider = new InteractivePasswordProvider(path);
+    this.path = Objects.requireNonNull(path);
   }
 
   @Override
   public InputDecryptor get(final AlgorithmIdentifier algorithm) throws OperatorCreationException {
-    final var password = pass.orElseGet(passwordProvider::askPassword);
+    final var password = pass.orElseGet(() -> this.askPassword(path));
     return new JceOpenSSLPKCS8DecryptorProviderBuilder()
         .setProvider(BouncyCastleProvider.PROVIDER_NAME)
         .build(password)
