@@ -1,5 +1,6 @@
 package de.ebsnet.crmf.util;
 
+import de.ebsnet.crmf.exception.CannotLoadKey;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,11 +41,13 @@ public final class KeyPairUtil {
           return loadPEMKeyPair(pkp);
         } else if (parsed instanceof PEMEncryptedKeyPair pekp) {
           return loadPEMEncryptedKeyPair(pekp, path, pass);
+        } else if (parsed instanceof PrivateKeyInfo privateKeyInfo) {
+          return loadECKeyPair(privateKeyInfo);
         } else if (parsed instanceof PKCS8EncryptedPrivateKeyInfo p8epki) {
           return loadPKCS8EncryptedKeyPair(p8epki, path, pass);
         }
       }
-      throw new IllegalArgumentException("not a PEM encoded EC key.");
+      throw new CannotLoadKey("unsupported key format");
     }
   }
 
@@ -59,11 +62,11 @@ public final class KeyPairUtil {
               new OptionalInteractiveDecryptorProvider(pass, path));
       return loadECKeyPair(decrypted);
     } catch (PKCSException e) {
-      throw new IOException("cannot decrypt private key", e);
+      throw new CannotLoadKey("cannot decrypt private key", e);
     }
   }
 
-  private static KeyPair loadECKeyPair(final PrivateKeyInfo privateKeyInfo) throws PEMException {
+  private static KeyPair loadECKeyPair(final PrivateKeyInfo privateKeyInfo) throws CannotLoadKey {
     try {
       final var keyFactory =
           new NamedJcaJceHelper(BouncyCastleProvider.PROVIDER_NAME).createKeyFactory("EC");
@@ -86,9 +89,9 @@ public final class KeyPairUtil {
         | InvalidKeySpecException
         | NoSuchAlgorithmException
         | NoSuchProviderException e) {
-      throw new PEMException("unable to convert key pair: " + e.getMessage(), e);
+      throw new CannotLoadKey("unable to convert key pair: " + e.getMessage(), e);
     }
-    throw new PEMException("does not look like a EC key");
+    throw new CannotLoadKey("does not look like a EC key");
   }
 
   private static KeyPair loadPEMEncryptedKeyPair(

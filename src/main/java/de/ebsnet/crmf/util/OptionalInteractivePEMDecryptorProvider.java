@@ -23,7 +23,7 @@ public final class OptionalInteractivePEMDecryptorProvider implements PEMDecrypt
   @Override
   public PEMDecryptor get(final String dekAlgName) {
     return (data, iv) ->
-        new BcPEMDecryptorProvider(this.pass.orElseGet(passwordProvider::getPassword))
+        new BcPEMDecryptorProvider(this.pass.orElseGet(passwordProvider::askPassword))
             .get(dekAlgName)
             .decrypt(data, iv);
   }

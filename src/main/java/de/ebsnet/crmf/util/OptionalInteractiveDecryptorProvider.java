@@ -21,7 +21,7 @@ public class OptionalInteractiveDecryptorProvider implements InputDecryptorProvi
 
   @Override
   public InputDecryptor get(final AlgorithmIdentifier algorithm) throws OperatorCreationException {
-    final var password = pass.orElseGet(passwordProvider::getPassword);
+    final var password = pass.orElseGet(passwordProvider::askPassword);
     return new JceOpenSSLPKCS8DecryptorProviderBuilder()
         .setProvider(BouncyCastleProvider.PROVIDER_NAME)
         .build(password)
