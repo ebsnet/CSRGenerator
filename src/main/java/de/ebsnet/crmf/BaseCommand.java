@@ -1,5 +1,6 @@
 package de.ebsnet.crmf;
 
+import de.ebsnet.crmf.util.PEMAskPassDecryptorProvider;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,9 +8,14 @@ import java.security.KeyPair;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMDecryptorProvider;
+import org.bouncycastle.openssl.PEMEncryptedKeyPair;
+import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.bc.BcPEMDecryptorProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import picocli.CommandLine.Option;
 
@@ -23,6 +29,11 @@ public class BaseCommand {
   protected Path encPath;
 
   @Option(
+      names = {"--encryption-pass"},
+      description = "Password for the encryption key")
+  private Optional<char[]> encPass;
+
+  @Option(
       names = {"--signature"},
       required = true,
       description =
@@ -30,11 +41,27 @@ public class BaseCommand {
   protected Path sigPath;
 
   @Option(
+      names = {"--signature-pass"},
+      description = "Password for the signature key")
+  private Optional<char[]> sigPass;
+
+  @Option(
       names = {"--tls"},
       required = true,
       description =
           "Path to the PEM encoded TLS private key (MUST be a new key. Old keys must not be reused)")
   protected Path tlsPath;
+
+  @Option(
+      names = {"--tls-pass"},
+      description = "Password for the TLS key")
+  private Optional<char[]> tlsPass;
+
+  @Option(
+      names = {"--key-pass"},
+      description =
+          "Password if it's the same for all keys. If the specific `--signature-pass`, `--encryption-pass` or `--tls-pass` parameters are set, those are used.")
+  private Optional<char[]> keyPass;
 
   @Option(
       names = {"--out"},
@@ -46,6 +73,16 @@ public class BaseCommand {
     // this class can only be instantiated from an extending class
   }
 
+  @SuppressWarnings("PMD.UselessParentheses") // false positive
+  protected Optional<char[]> passForType(final KeyType keyType) {
+    return (switch (keyType) {
+          case SIG -> this.sigPass;
+          case ENC -> this.encPass;
+          case TLS -> this.tlsPass;
+        })
+        .or(() -> this.keyPass);
+  }
+
   /**
    * Load a PEM encoded EC keypair from disk.
    *
@@ -53,34 +90,34 @@ public class BaseCommand {
    * @return
    * @throws IOException
    */
-  public static KeyPair loadKeyPair(final Path path) throws IOException {
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  /* default */ static KeyPair loadKeyPair(final Path path, final Optional<char[]> pass)
+      throws IOException {
     try (var parser = new PEMParser(Files.newBufferedReader(path))) {
-      var parsed = parser.readObject();
-      while (parsed != null && !(parsed instanceof PEMKeyPair)) {
-        parsed = parser.readObject();
+      for (var parsed = parser.readObject(); parsed != null; parsed = parser.readObject()) {
+        if (parsed instanceof PEMKeyPair pkp) {
+          return loadKeyPair(pkp);
+        } else if (parsed instanceof PEMEncryptedKeyPair pekp) {
+          return loadKeyPair(pekp, path, pass);
+        }
       }
-      if (parsed != null) {
-        return new JcaPEMKeyConverter()
-            .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-            .getKeyPair((PEMKeyPair) parsed);
-      } else {
-        throw new IllegalArgumentException("not a PEM encoded EC key.");
-      }
+      throw new IllegalArgumentException("not a PEM encoded EC key.");
     }
   }
 
-  /**
-   * Load a single certificate from a file. If the file contains a certificate chain, the first
-   * certificate of the chain is returned.
-   *
-   * @param path
-   * @return
-   * @throws CertificateException
-   * @throws IOException
-   */
-  public static X509Certificate loadCertificate(final Path path)
-      throws CertificateException, IOException {
-    return loadCertificateChain(path)[0];
+  private static KeyPair loadKeyPair(
+      final PEMEncryptedKeyPair pemEncryptedKeyPair, final Path path, final Optional<char[]> pass)
+      throws IOException {
+    final var decryptor =
+        pass.<PEMDecryptorProvider>map(BcPEMDecryptorProvider::new)
+            .orElseGet(() -> new PEMAskPassDecryptorProvider(path));
+    return loadKeyPair(pemEncryptedKeyPair.decryptKeyPair(decryptor));
+  }
+
+  private static KeyPair loadKeyPair(final PEMKeyPair pemKeyPair) throws PEMException {
+    return new JcaPEMKeyConverter()
+        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+        .getKeyPair(pemKeyPair);
   }
 
   /**
@@ -91,7 +128,7 @@ public class BaseCommand {
    * @throws CertificateException
    * @throws IOException
    */
-  public static X509Certificate[] loadCertificateChain(final Path path)
+  /* default */ static X509Certificate[] loadCertificateChain(final Path path)
       throws CertificateException, IOException {
     final var fact = CertificateFactory.getInstance("X.509");
     try (var inStream = Files.newInputStream(path)) {

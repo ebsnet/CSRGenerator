@@ -4,21 +4,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.BERSet;
-import org.bouncycastle.asn1.cmp.PKIBody;
-import org.bouncycastle.asn1.cmp.PKIMessage;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -34,25 +25,19 @@ import org.bouncycastle.cert.crmf.CertificateReqMessages;
 import org.bouncycastle.cert.crmf.CertificateReqMessagesBuilder;
 import org.bouncycastle.cert.crmf.CertificateRequestMessage;
 import org.bouncycastle.cert.crmf.jcajce.JcaCertificateRequestMessageBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
-@SuppressWarnings("PMD.ExcessiveImports")
 @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
 public final class CSRUtil {
-  public static final String SIGNATURE_ALGORITHM = "SHA384withECDSA";
-  public static final ASN1ObjectIdentifier SIG_ALG_OID =
-      new ASN1ObjectIdentifier("1.2.840.10045.4.3.3");
+  private static final String SIGNATURE_ALGORITHM = "SHA384withECDSA";
+
+  public static final ASN1ObjectIdentifier OID_CERT_REQ_MSGS =
+      new ASN1ObjectIdentifier("0.4.0.127.0.7.4.1.1.1");
+  public static final ASN1ObjectIdentifier OID_CERT_REQ_MSGS_WITH_OUTER_SIG =
+      new ASN1ObjectIdentifier("0.4.0.127.0.7.4.1.1.2");
 
   private static final SecureRandom RNG = new SecureRandom();
 
@@ -76,48 +61,25 @@ public final class CSRUtil {
   }
 
   /**
-   * Wrap the {@code CertificateReqMessages} in a {@link PKIMessage}
+   * Wrap the {@code CertificateReqMessages} in a {@link ContentInfo} for an initial request.
    *
-   * @param messages
+   * @param messages the request messages
    * @return
    */
-  public static PKIMessage asPKIMessage(final CertificateReqMessages messages) {
-    return asPKIMessage(messages, false);
+  public static ContentInfo asContentInfo(final CertificateReqMessages messages) {
+    return asContentInfo(messages.toASN1Structure(), false);
   }
 
   /**
-   * Create a {@link PKIMessage} with the {@link BSIPKIHeader} from the {@link
-   * CertificateReqMessages}.
+   * Create a {@link ContentInfo} from the {@link ASN1Encodable} content.
    *
-   * @param messages
-   * @param renewal should always be false since renewal is currently not supported
+   * @param content the content
+   * @param renewal if this is a renewal or initial request.
    * @return
    */
-  public static PKIMessage asPKIMessage(
-      final CertificateReqMessages messages, final boolean renewal) {
-    return asPKIMessage(messages.toASN1Structure(), renewal);
+  public static ContentInfo asContentInfo(final ASN1Encodable content, final boolean renewal) {
+    return new ContentInfo(renewal ? OID_CERT_REQ_MSGS_WITH_OUTER_SIG : OID_CERT_REQ_MSGS, content);
   }
-
-  public static PKIMessage asPKIMessage(final ASN1Encodable content, final boolean renewal) {
-    return new PKIMessage(
-        renewal ? new BSIRenewalHeader() : new BSIPKIHeader(),
-        new PKIBody(renewal ? PKIBody.TYPE_CERT_REQ : PKIBody.TYPE_INIT_REQ, content));
-  }
-
-  //  public static ProtectedPKIMessage wrapForRenewal(
-  //      final CertificateReqMessages body, final KeyPair oldSignatureKey)
-  //      throws OperatorCreationException, CMPException {
-  //    //    return new PKIMessage(
-  //    //        new BSIRenewalHeader(), new PKIBody(PKIBody.TYPE_CERT_REQ,
-  //    // messages.toASN1Structure()));
-  //    final var signer =
-  //        new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
-  //            .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-  //            .build(oldSignatureKey.getPrivate());
-  //    return new ProtectedPKIMessageBuilder(PKIHeader.NULL_NAME, PKIHeader.NULL_NAME)
-  //        .setBody(PKIBody.TYPE_CERT_REQ, body)
-  //        .build(signer);
-  //  }
 
   /**
    * Generate CSR for a single keypair.
@@ -147,6 +109,7 @@ public final class CSRUtil {
         new X509ExtensionUtils(
             new BcDigestCalculatorProvider()
                 .get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1)));
+
     final var builder =
         new JcaCertificateRequestMessageBuilder(BigInteger.valueOf(CERT_REQ_ID.getAndIncrement()))
             .setPublicKey(pubKeyInfo)
@@ -190,44 +153,6 @@ public final class CSRUtil {
             }
             : new GeneralName[] {emailGN, uriGN};
     return new GeneralNames(generalNames);
-  }
-
-  public static CMSSignedData outerSignature(
-      final KeyPair keyPair, final X509Certificate[] chain, final CertificateReqMessages csr)
-      throws IOException, GeneralSecurityException, OperatorCreationException, CMSException {
-    return outerSignature(keyPair, chain, csr.toASN1Structure().getEncoded(ASN1Encoding.DER));
-  }
-
-  public static CMSSignedData outerSignature(
-      final KeyPair keyPair, final X509Certificate[] chain, final byte[] data)
-      throws OperatorCreationException, GeneralSecurityException, CMSException {
-    final var gen = new CMSSignedDataGenerator();
-
-    final var signedAttributes = new ASN1EncodableVector();
-    signedAttributes.add(
-        new Attribute(CMSAttributes.contentType, new BERSet(BSIPKIHeader.OID_BSI_CERT_REQ_MSGS)));
-
-    final var signedAttributesTable = new AttributeTable(signedAttributes);
-    final var sigAlg = "SHA256withECDSA";
-    final var signer =
-        new JcaContentSignerBuilder(sigAlg)
-            .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-            .build(keyPair.getPrivate());
-    gen.addSignerInfoGenerator(
-        new JcaSignerInfoGeneratorBuilder(
-                new JcaDigestCalculatorProviderBuilder()
-                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                    .build())
-            .setSignedAttributeGenerator(
-                new DefaultSignedAttributeTableGenerator(signedAttributesTable))
-            .build(signer, chain[0]));
-
-    //    final var certStore = new JcaCertStore(List.of(chain));
-    //    gen.addCertificates(certStore);
-    gen.addCertificate(new JcaX509CertificateHolder(chain[0]));
-
-    return gen.generate(
-        new CMSProcessableByteArray(BSIPKIHeader.OID_BSI_CERT_REQ_MSGS, data), true);
   }
 
   private CSRUtil() {}

@@ -14,7 +14,7 @@ import java.security.NoSuchProviderException;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import org.bouncycastle.asn1.cmp.PKIMessage;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.crmf.CRMFException;
 import org.bouncycastle.cert.crmf.CertificateReqMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -86,7 +86,9 @@ public final class Initial extends BaseCommand implements Callable<Void> {
   public Void call() throws CRMFException, IOException, OperatorCreationException {
     final var keyPairs =
         new Triple<>(
-            loadKeyPair(this.encPath), loadKeyPair(this.sigPath), loadKeyPair(this.tlsPath));
+            loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
+            loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
+            loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
     final var metadata =
         new CSRMetadata(
             this.name,
@@ -106,9 +108,9 @@ public final class Initial extends BaseCommand implements Callable<Void> {
     return null;
   }
 
-  public static PKIMessage generateCSR(final Triple<KeyPair> keyPairs, final CSRMetadata metadata)
+  public static ContentInfo generateCSR(final Triple<KeyPair> keyPairs, final CSRMetadata metadata)
       throws CRMFException, IOException, OperatorCreationException {
-    return CSRUtil.asPKIMessage(generateCertReqMessages(keyPairs, metadata));
+    return CSRUtil.asContentInfo(generateCertReqMessages(keyPairs, metadata));
   }
 
   public static CertificateReqMessages generateCertReqMessages(

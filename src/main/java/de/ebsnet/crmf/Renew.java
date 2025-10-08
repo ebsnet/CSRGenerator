@@ -11,16 +11,14 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
-import org.bouncycastle.cert.cmp.CMPException;
 import org.bouncycastle.cert.crmf.CRMFException;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.OperatorCreationException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-// TODO: This does not work, yet
 
 /**
  * This should generate a renewal CSR according to the SM-PKI but our SubCA does not accept those
@@ -49,6 +47,11 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   private Path prevKeyPair;
 
   @Option(
+      names = {"--previous-keypair-pass"},
+      description = "Password for the old key")
+  private Optional<char[]> prevKeyPass;
+
+  @Option(
       names = {"--previous-certificate"},
       required = true,
       description =
@@ -57,7 +60,6 @@ public final class Renew extends BaseCommand implements Callable<Void> {
 
   @Option(
       names = {"--trust-chain"},
-      //      required = true,
       description = "Path to the trust chain of the sub CA")
   private Path[] trustChain;
 
@@ -67,24 +69,20 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           GeneralSecurityException,
           IOException,
           OperatorCreationException,
-          CMSException,
-          CMPException {
+          CMSException {
     final var basePath = Path.of("/home/me/work/tmp/renewal");
     final var renew = new Renew();
     renew.prevCertificate = basePath.resolve("EBSnet.EMT.MAK_Signature_539.pem");
-    //        Path.of("/home/me/work/tmp/crmf-csr/keys/old/personalSignatureCertificate.pem");
-    renew.trustChain = new Path[] {basePath.resolve("DARZ-Test.CA-SN4-2022.pem")};
-    //      Path.of("/home/me/Dokumente/work/keys/old/DARZ-Test.CA-SN4-2022.pem");
+    renew.trustChain =
+        new Path[] {
+          basePath.resolve("DARZ-Test.CA-SN4-2022.pem"),
+          //          basePath.resolve("sm-test-root.ca_sn3.der"),
+        };
     renew.prevKeyPair = basePath.resolve("9984533000003_sig.key");
-    //      Path.of("/home/me/work/tmp/crmf-csr/keys/old/sig.key");
     renew.encPath = basePath.resolve("enc.key");
-    //      Path.of("/home/me/work/tmp/crmf-csr/keys/new/enc.key");
     renew.sigPath = basePath.resolve("sig.key");
-    //      Path.of("/home/me/work/tmp/crmf-csr/keys/new/sig.key");
     renew.tlsPath = basePath.resolve("tls.key");
-    //      Path.of("/home/me/work/tmp/crmf-csr/keys/new/tls.key");
     renew.out = basePath.resolve("renew.pem");
-    //      Path.of("/home/me/work/tmp/crmf-csr/csr4.pem");
     renew.call();
   }
 
@@ -120,17 +118,9 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           () ->
               "Certificate chain does not end with root certificate. Ends with "
                   + root.getSubjectX500Principal());
-      //      return false;
     }
-    return true;
+    return endsWithRoot;
   }
-
-  //  @SuppressWarnings("PMD.UseVarargs")
-  //  private static <T> T[] concatArrays(final T[] array1, final T[] array2) {
-  //    final T[] result = Arrays.copyOf(array1, array1.length + array2.length);
-  //    System.arraycopy(array2, 0, result, array1.length, array2.length);
-  //    return result;
-  //  }
 
   @Override
   public Void call()
@@ -139,7 +129,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           CRMFException,
           OperatorCreationException,
           CMSException {
-    final var prevKp = loadKeyPair(this.prevKeyPair);
+    final var prevKp = loadKeyPair(this.prevKeyPair, this.prevKeyPass);
     final var prevCerts = loadCertificateChain(this.prevCertificate);
     var buildChain = new X509Certificate[0];
     for (final var chain : this.trustChain) {
@@ -153,15 +143,17 @@ public final class Renew extends BaseCommand implements Callable<Void> {
 
     final var keyPairs =
         new Triple<>(
-            loadKeyPair(this.encPath), loadKeyPair(this.sigPath), loadKeyPair(this.tlsPath));
+            loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
+            loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
+            loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
     final var metadata = CSRMetadata.fromCertificate(prevCerts[0]);
 
     final var innerCSR = Initial.generateCertReqMessages(keyPairs, metadata);
-    final var signed = CSRUtil.outerSignature(prevKp, allCerts, innerCSR);
+    final var signed = RenewalUtil.outerSignature(prevKp, allCerts, innerCSR);
 
     final var signedASN1 = signed.toASN1Structure();
 
-    final var result = CSRUtil.asPKIMessage(signedASN1.getContent(), true);
+    final var result = CSRUtil.asContentInfo(signedASN1.getContent(), true);
 
     Files.write(this.out, result.getEncoded(), StandardOpenOption.CREATE_NEW);
 

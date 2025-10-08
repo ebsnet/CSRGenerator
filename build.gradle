@@ -84,7 +84,8 @@ repositories {
   mavenCentral()
 }
 
-tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+import com.github.spotbugs.snom.SpotBugsTask
+tasks.withType(SpotBugsTask).configureEach {
   reports {
     html.required = true
     xml.required = true
@@ -158,6 +159,7 @@ test {
 }
 
 // write application version to version property file
+
 import org.apache.tools.ant.filters.*
 processResources {
   filter ReplaceTokens, tokens: [
@@ -182,19 +184,4 @@ spotlessJava {
   dependsOn ':wsdl2java'
 }
 
-void prepare() {
-  if (System.env['CI_JOB_ID'] == null) {
-    String[] hooks = ['pre-commit', 'post-commit']
-    hooks.findAll {
-      !(new File(rootProject.rootDir, '.git/hooks/' + it).exists())
-    }.each {
-      println 'Linking ' + it
-      java.nio.file.Files.createSymbolicLink(
-        new File(rootProject.rootDir, '.git/hooks/' + it).toPath(),
-        new File(rootProject.rootDir, 'hooks/' + it).toPath()
-      )
-    }
-  }
-}
-// prepare()
 // vim: set filetype=groovy ts=2 sw=2 tw=120 et :

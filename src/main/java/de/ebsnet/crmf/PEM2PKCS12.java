@@ -12,6 +12,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import picocli.CommandLine.Command;
@@ -34,6 +35,12 @@ public final class PEM2PKCS12 implements Callable<Void> {
       required = true,
       description = "Path to the PEM key pair")
   private Path keyPairPath;
+
+  @Option(
+      names = {"--keypair-pass"},
+      required = true,
+      description = "Password for the PEM key pair")
+  private Optional<char[]> keyPairPass;
 
   @Option(
       names = {"--certificate"},
@@ -70,7 +77,7 @@ public final class PEM2PKCS12 implements Callable<Void> {
     if (keyStore.containsAlias(this.alias)) {
       throw new IllegalStateException("alias already exists in the keystore");
     }
-    final var keyPair = BaseCommand.loadKeyPair(this.keyPairPath);
+    final var keyPair = BaseCommand.loadKeyPair(this.keyPairPath, this.keyPairPass);
     final var certificate = BaseCommand.loadCertificateChain(this.certificatePath);
     final var chain = new ArrayList<>(List.of(certificate));
 
@@ -80,12 +87,6 @@ public final class PEM2PKCS12 implements Callable<Void> {
 
     keyStore.setKeyEntry(
         this.alias, keyPair.getPrivate(), this.keyStorePass, chain.toArray(new X509Certificate[0]));
-    // final var entry =
-    // new KeyStore.PrivateKeyEntry(
-    // keyPair.getPrivate(), chain.toArray(chain.toArray(new X509Certificate[0])));
-    // final var protectionParams = new
-    // KeyStore.PasswordProtection(this.keyStorePass);
-    // keyStore.setEntry(this.alias, entry, protectionParams);
 
     try (var outStream = Files.newOutputStream(this.out, StandardOpenOption.CREATE_NEW)) {
       keyStore.store(outStream, this.keyStorePass);
@@ -124,16 +125,20 @@ public final class PEM2PKCS12 implements Callable<Void> {
   }
 
   public static KeyStore pemToPKCS12(
-      final Path key, final Path cert, final String alias, final char... pass)
+      final Path key,
+      final Optional<char[]> keyPass,
+      final Path cert,
+      final String alias,
+      final char... pass)
       throws KeyStoreException,
           CertificateException,
           IOException,
           NoSuchAlgorithmException,
           NoSuchProviderException {
-    final var keyPair = BaseCommand.loadKeyPair(key);
+    final var keyPair = BaseCommand.loadKeyPair(key, keyPass);
     final var certificate = BaseCommand.loadCertificateChain(cert);
     final var keyStore = loadKeyStore(null, pass);
-    keyStore.setKeyEntry(alias, keyPair.getPrivate(), "123456".toCharArray(), certificate);
+    keyStore.setKeyEntry(alias, keyPair.getPrivate(), pass, certificate);
     return keyStore;
   }
 }
