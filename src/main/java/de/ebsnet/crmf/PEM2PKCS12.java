@@ -1,5 +1,6 @@
 package de.ebsnet.crmf;
 
+import de.ebsnet.crmf.util.KeyPairUtil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,7 +78,7 @@ public final class PEM2PKCS12 implements Callable<Void> {
     if (keyStore.containsAlias(this.alias)) {
       throw new IllegalStateException("alias already exists in the keystore");
     }
-    final var keyPair = BaseCommand.loadKeyPair(this.keyPairPath, this.keyPairPass);
+    final var keyPair = KeyPairUtil.loadKeyPair(this.keyPairPath, this.keyPairPass);
     final var certificate = BaseCommand.loadCertificateChain(this.certificatePath);
     final var chain = new ArrayList<>(List.of(certificate));
 
@@ -135,7 +136,7 @@ public final class PEM2PKCS12 implements Callable<Void> {
           IOException,
           NoSuchAlgorithmException,
           NoSuchProviderException {
-    final var keyPair = BaseCommand.loadKeyPair(key, keyPass);
+    final var keyPair = KeyPairUtil.loadKeyPair(key, keyPass);
     final var certificate = BaseCommand.loadCertificateChain(cert);
     final var keyStore = loadKeyStore(null, pass);
     keyStore.setKeyEntry(alias, keyPair.getPrivate(), pass, certificate);

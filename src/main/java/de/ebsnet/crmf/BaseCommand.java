@@ -1,22 +1,12 @@
 package de.ebsnet.crmf;
 
-import de.ebsnet.crmf.util.PEMAskPassDecryptorProvider;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.KeyPair;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMDecryptorProvider;
-import org.bouncycastle.openssl.PEMEncryptedKeyPair;
-import org.bouncycastle.openssl.PEMException;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.bc.BcPEMDecryptorProvider;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import picocli.CommandLine.Option;
 
 /** Base for all subcommands */
@@ -81,43 +71,6 @@ public class BaseCommand {
           case TLS -> this.tlsPass;
         })
         .or(() -> this.keyPass);
-  }
-
-  /**
-   * Load a PEM encoded EC keypair from disk.
-   *
-   * @param path
-   * @return
-   * @throws IOException
-   */
-  @SuppressWarnings("PMD.OnlyOneReturn")
-  /* default */ static KeyPair loadKeyPair(final Path path, final Optional<char[]> pass)
-      throws IOException {
-    try (var parser = new PEMParser(Files.newBufferedReader(path))) {
-      for (var parsed = parser.readObject(); parsed != null; parsed = parser.readObject()) {
-        if (parsed instanceof PEMKeyPair pkp) {
-          return loadKeyPair(pkp);
-        } else if (parsed instanceof PEMEncryptedKeyPair pekp) {
-          return loadKeyPair(pekp, path, pass);
-        }
-      }
-      throw new IllegalArgumentException("not a PEM encoded EC key.");
-    }
-  }
-
-  private static KeyPair loadKeyPair(
-      final PEMEncryptedKeyPair pemEncryptedKeyPair, final Path path, final Optional<char[]> pass)
-      throws IOException {
-    final var decryptor =
-        pass.<PEMDecryptorProvider>map(BcPEMDecryptorProvider::new)
-            .orElseGet(() -> new PEMAskPassDecryptorProvider(path));
-    return loadKeyPair(pemEncryptedKeyPair.decryptKeyPair(decryptor));
-  }
-
-  private static KeyPair loadKeyPair(final PEMKeyPair pemKeyPair) throws PEMException {
-    return new JcaPEMKeyConverter()
-        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-        .getKeyPair(pemKeyPair);
   }
 
   /**

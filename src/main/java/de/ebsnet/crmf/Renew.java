@@ -2,6 +2,7 @@ package de.ebsnet.crmf;
 
 import de.ebsnet.crmf.data.CSRMetadata;
 import de.ebsnet.crmf.data.Triple;
+import de.ebsnet.crmf.util.KeyPairUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -78,7 +79,8 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           basePath.resolve("DARZ-Test.CA-SN4-2022.pem"),
           //          basePath.resolve("sm-test-root.ca_sn3.der"),
         };
-    renew.prevKeyPair = basePath.resolve("9984533000003_sig.key");
+    renew.prevKeyPair = basePath.resolve("9984533000003_sig.key.enc");
+    renew.prevKeyPass = Optional.of("123456".toCharArray());
     renew.encPath = basePath.resolve("enc.key");
     renew.sigPath = basePath.resolve("sig.key");
     renew.tlsPath = basePath.resolve("tls.key");
@@ -129,7 +131,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           CRMFException,
           OperatorCreationException,
           CMSException {
-    final var prevKp = loadKeyPair(this.prevKeyPair, this.prevKeyPass);
+    final var prevKp = KeyPairUtil.loadKeyPair(this.prevKeyPair, this.prevKeyPass);
     final var prevCerts = loadCertificateChain(this.prevCertificate);
     var buildChain = new X509Certificate[0];
     for (final var chain : this.trustChain) {
@@ -143,13 +145,13 @@ public final class Renew extends BaseCommand implements Callable<Void> {
 
     final var keyPairs =
         new Triple<>(
-            loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
-            loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
-            loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
+            KeyPairUtil.loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
+            KeyPairUtil.loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
+            KeyPairUtil.loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
     final var metadata = CSRMetadata.fromCertificate(prevCerts[0]);
 
     final var innerCSR = Initial.generateCertReqMessages(keyPairs, metadata);
-    final var signed = RenewalUtil.outerSignature(prevKp, allCerts, innerCSR);
+    final var signed = RenewalUtil.outerSignature(prevKp.getPrivate(), allCerts, innerCSR);
 
     final var signedASN1 = signed.toASN1Structure();
 

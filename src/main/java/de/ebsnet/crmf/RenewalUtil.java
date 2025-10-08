@@ -2,7 +2,7 @@ package de.ebsnet.crmf;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -30,13 +30,13 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 public final class RenewalUtil {
   public static CMSSignedData outerSignature(
-      final KeyPair keyPair, final X509Certificate[] chain, final CertificateReqMessages csr)
+      final PrivateKey privateKey, final X509Certificate[] chain, final CertificateReqMessages csr)
       throws IOException, GeneralSecurityException, OperatorCreationException, CMSException {
-    return outerSignature(keyPair, chain, csr.toASN1Structure().getEncoded());
+    return outerSignature(privateKey, chain, csr.toASN1Structure().getEncoded());
   }
 
   private static CMSSignedData outerSignature(
-      final KeyPair keyPair, final X509Certificate[] chain, final byte[] data)
+      final PrivateKey privateKey, final X509Certificate[] chain, final byte[] data)
       throws OperatorCreationException, GeneralSecurityException, CMSException {
     final var gen = new CMSSignedDataGenerator();
 
@@ -57,7 +57,7 @@ public final class RenewalUtil {
     final var signer =
         new JcaContentSignerBuilder(sigAlg)
             .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-            .build(keyPair.getPrivate());
+            .build(privateKey);
     gen.addSignerInfoGenerator(
         new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder()

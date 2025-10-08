@@ -2,6 +2,7 @@ package de.ebsnet.crmf;
 
 import de.ebsnet.crmf.data.CSRMetadata;
 import de.ebsnet.crmf.data.Triple;
+import de.ebsnet.crmf.util.KeyPairUtil;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -86,9 +87,9 @@ public final class Initial extends BaseCommand implements Callable<Void> {
   public Void call() throws CRMFException, IOException, OperatorCreationException {
     final var keyPairs =
         new Triple<>(
-            loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
-            loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
-            loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
+            KeyPairUtil.loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
+            KeyPairUtil.loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
+            KeyPairUtil.loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
     final var metadata =
         new CSRMetadata(
             this.name,
