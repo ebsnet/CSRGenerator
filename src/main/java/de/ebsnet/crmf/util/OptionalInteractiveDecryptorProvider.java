@@ -10,6 +10,10 @@ import org.bouncycastle.operator.InputDecryptor;
 import org.bouncycastle.operator.InputDecryptorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 
+/**
+ * {@link InputDecryptorProvider} that uses an {@link Optional} password or asks the user to enter
+ * the password.
+ */
 public class OptionalInteractiveDecryptorProvider implements InputDecryptorProvider {
   private final Optional<char[]> pass;
   private final InteractivePasswordProvider passwordProvider;

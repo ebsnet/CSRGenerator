@@ -7,7 +7,10 @@ import org.bouncycastle.openssl.PEMDecryptor;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.bc.BcPEMDecryptorProvider;
 
-/** {@link PEMDecryptorProvider} that interactively asks the user for a password. */
+/**
+ * {@link PEMDecryptorProvider} that uses an {@link Optional} password or asks the user to enter the
+ * password.
+ */
 public final class OptionalInteractivePEMDecryptorProvider implements PEMDecryptorProvider {
   private final Optional<char[]> pass;
   private final InteractivePasswordProvider passwordProvider;
