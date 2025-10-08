@@ -159,7 +159,6 @@ test {
 }
 
 // write application version to version property file
-
 import org.apache.tools.ant.filters.*
 processResources {
   filter ReplaceTokens, tokens: [
