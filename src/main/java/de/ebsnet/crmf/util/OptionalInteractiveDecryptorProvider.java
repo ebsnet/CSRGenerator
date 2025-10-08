@@ -1,0 +1,35 @@
+package de.ebsnet.crmf.util;
+
+import java.nio.file.Path;
+import java.util.Objects;
+import java.util.Optional;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptor;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+
+/**
+ * {@link InputDecryptorProvider} that uses an {@link Optional} password or asks the user to enter
+ * the password.
+ */
+public class OptionalInteractiveDecryptorProvider
+    implements InputDecryptorProvider, InteractivePasswordProvider {
+  private final Optional<char[]> pass;
+  private final Path path;
+
+  public OptionalInteractiveDecryptorProvider(final Optional<char[]> pass, final Path path) {
+    this.pass = Objects.requireNonNull(pass);
+    this.path = Objects.requireNonNull(path);
+  }
+
+  @Override
+  public InputDecryptor get(final AlgorithmIdentifier algorithm) throws OperatorCreationException {
+    final var password = pass.orElseGet(() -> this.askPassword(path));
+    return new JceOpenSSLPKCS8DecryptorProviderBuilder()
+        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+        .build(password)
+        .get(algorithm);
+  }
+}
