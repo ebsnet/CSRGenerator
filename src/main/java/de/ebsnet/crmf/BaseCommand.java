@@ -21,7 +21,7 @@ public class BaseCommand {
   @Option(
       names = {"--encryption-pass"},
       description = "Password for the encryption key")
-  private Optional<char[]> encPass;
+  protected Optional<char[]> encPass = Optional.empty();
 
   @Option(
       names = {"--signature"},
@@ -33,7 +33,7 @@ public class BaseCommand {
   @Option(
       names = {"--signature-pass"},
       description = "Password for the signature key")
-  private Optional<char[]> sigPass;
+  protected Optional<char[]> sigPass = Optional.empty();
 
   @Option(
       names = {"--tls"},
@@ -45,13 +45,13 @@ public class BaseCommand {
   @Option(
       names = {"--tls-pass"},
       description = "Password for the TLS key")
-  private Optional<char[]> tlsPass;
+  protected Optional<char[]> tlsPass = Optional.empty();
 
   @Option(
       names = {"--key-pass"},
       description =
           "Password if it's the same for all keys. If the specific `--signature-pass`, `--encryption-pass` or `--tls-pass` parameters are set, those are used.")
-  private Optional<char[]> keyPass;
+  protected Optional<char[]> keyPass = Optional.empty();
 
   @Option(
       names = {"--out"},
