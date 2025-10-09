@@ -79,7 +79,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           basePath.resolve("DARZ-Test.CA-SN4-2022.pem"),
           //          basePath.resolve("sm-test-root.ca_sn3.der"),
         };
-    renew.prevKeyPair = basePath.resolve("9984533000003_sig.key.enc");
+    renew.prevKeyPair = basePath.resolve("9984533000003_sig.key");
     renew.prevKeyPass = Optional.of("123456".toCharArray());
     renew.encPath = basePath.resolve("enc.key");
     renew.sigPath = basePath.resolve("sig.key");
