@@ -118,8 +118,8 @@ public final class CSRUtil {
                 Extension.subjectKeyIdentifier,
                 false,
                 extUtil.createSubjectKeyIdentifier(pubKeyInfo))
-            .addExtension(Extension.keyUsage, true, type.keyUsage())
-            .addExtension(Extension.subjectAlternativeName, true, san)
+            .addExtension(Extension.keyUsage, false, type.keyUsage())
+            .addExtension(Extension.subjectAlternativeName, false, san)
             .setRegInfo(regInfo)
             .setProofOfPossessionSigningKeySigner(
                 new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
@@ -128,7 +128,7 @@ public final class CSRUtil {
 
     final var eku = type.extendedKeyUsage();
     if (eku.isPresent()) {
-      builder.addExtension(Extension.extendedKeyUsage, true, eku.get());
+      builder.addExtension(Extension.extendedKeyUsage, false, eku.get());
     }
 
     return builder.build();
