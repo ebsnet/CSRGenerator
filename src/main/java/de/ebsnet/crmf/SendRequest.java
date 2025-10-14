@@ -20,6 +20,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
@@ -56,6 +57,11 @@ public final class SendRequest implements Callable<Void> {
   private Path tlsKeyPath;
 
   @Option(
+      names = {"--tls-key-pass"},
+      description = "Password for the TLS key")
+  private Optional<char[]> tlsKeyPass;
+
+  @Option(
       names = {"--tls-cert"},
       required = true,
       description = "Path to the currently valid TLS cert")
@@ -87,7 +93,6 @@ public final class SendRequest implements Callable<Void> {
           NoSuchAlgorithmException,
           KeyStoreException,
           NoSuchProviderException,
-          InterruptedException,
           KeyManagementException {
     final var sendRequest = new SendRequest();
     sendRequest.tlsCertPath =
@@ -112,7 +117,8 @@ public final class SendRequest implements Callable<Void> {
     final var pwd = Utils.randomPwd();
     final var sslContext =
         SSLContext.getInstance("TLSv1.2", BouncyCastleJsseProvider.PROVIDER_NAME);
-    final var keyStore = PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsCertPath, "tls", pwd);
+    final var keyStore =
+        PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsKeyPass, this.tlsCertPath, "tls", pwd);
 
     final var kmf = KeyManagerFactory.getInstance("PKIX", BouncyCastleJsseProvider.PROVIDER_NAME);
 
@@ -132,8 +138,7 @@ public final class SendRequest implements Callable<Void> {
           NoSuchAlgorithmException,
           KeyStoreException,
           NoSuchProviderException,
-          KeyManagementException,
-          InterruptedException {
+          KeyManagementException {
     try {
       final var sslContext = sslContext();
 
