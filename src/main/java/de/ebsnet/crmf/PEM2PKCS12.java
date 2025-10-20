@@ -39,7 +39,6 @@ public final class PEM2PKCS12 implements Callable<Void> {
 
   @Option(
       names = {"--keypair-pass"},
-      required = true,
       description = "Password for the PEM key pair")
   private Optional<char[]> keyPairPass;
 
