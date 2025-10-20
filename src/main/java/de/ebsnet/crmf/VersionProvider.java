@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Properties;
 import picocli.CommandLine;
 
-// @SuppressWarnings("PMD.UseProperClassLoader") // TODO
 public final class VersionProvider implements CommandLine.IVersionProvider {
   @Override
   public String[] getVersion() {
