@@ -34,10 +34,11 @@ public record CSRMetadata(
   private static final String RDN_L = "L";
   private static final String RDN_STREET = "STREET";
   private static final String RDN_ST = "ST";
-  private static final String RDN_PC = "2.5.4.17"; // NOPMD: not an IP address
-  public static final ASN1ObjectIdentifier OID_PC = new ASN1ObjectIdentifier(RDN_PC);
 
-  //  private static final Set<String> RDNS = Set.of(RDN_CN, RDN_O, RDN_OU, RDN_C, RDN_L, RDN_PC);
+  @SuppressWarnings("PMD.AvoidUsingHardCodedIP") // this is not an IP address
+  private static final String RDN_PC = "2.5.4.17";
+
+  public static final ASN1ObjectIdentifier OID_PC = new ASN1ObjectIdentifier(RDN_PC);
 
   public static CSRMetadata fromCertificate(final X509Certificate certificate)
       throws CertificateEncodingException {
