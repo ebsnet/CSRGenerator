@@ -125,11 +125,11 @@ public final class Initial extends BaseCommand implements Callable<Void> {
 
     final var encCrmf =
         CSRUtil.certReqMsg(
-            keyPairs.signature(), KeyType.ENC, subject, metadata.uri(), metadata.email());
+            keyPairs.encryption(), KeyType.ENC, subject, metadata.uri(), metadata.email());
 
     final var tlsCrmf =
         CSRUtil.certReqMsg(
-            keyPairs.signature(), KeyType.TLS, subject, metadata.uri(), metadata.email());
+            keyPairs.transport(), KeyType.TLS, subject, metadata.uri(), metadata.email());
 
     return CSRUtil.buildCertificateRequestMessages(sigCrmf, encCrmf, tlsCrmf);
   }
