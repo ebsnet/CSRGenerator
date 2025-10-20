@@ -98,8 +98,7 @@ public final class KeyPairUtil {
       final PEMEncryptedKeyPair pemEncryptedKeyPair, final Path path, final Optional<char[]> pass)
       throws IOException {
     return loadPEMKeyPair(
-        pemEncryptedKeyPair.decryptKeyPair(
-            new OptionalInteractivePEMDecryptorProvider(pass, path)));
+        pemEncryptedKeyPair.decryptKeyPair(new OptionalInteractiveDecryptorProvider(pass, path)));
   }
 
   private static KeyPair loadPEMKeyPair(final PEMKeyPair pemKeyPair) throws PEMException {
