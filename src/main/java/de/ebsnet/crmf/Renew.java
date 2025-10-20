@@ -3,12 +3,13 @@ package de.ebsnet.crmf;
 import de.ebsnet.crmf.data.CSRMetadata;
 import de.ebsnet.crmf.data.Triple;
 import de.ebsnet.crmf.util.KeyPairUtil;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
+import java.security.InvalidParameterException;
+import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -64,29 +65,30 @@ public final class Renew extends BaseCommand implements Callable<Void> {
       description = "Path to the trust chain of the sub CA")
   private Path[] trustChain;
 
-  @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
-  public static void main(final String[] args)
-      throws CRMFException,
-          GeneralSecurityException,
-          IOException,
-          OperatorCreationException,
-          CMSException {
-    final var basePath = Path.of("/home/me/work/tmp/renewal");
-    final var renew = new Renew();
-    renew.prevCertificate = basePath.resolve("EBSnet.EMT.MAK_Signature_539.pem");
-    renew.trustChain =
-        new Path[] {
-          basePath.resolve("DARZ-Test.CA-SN4-2022.pem"),
-          //          basePath.resolve("sm-test-root.ca_sn3.der"),
-        };
-    renew.prevKeyPair = basePath.resolve("9984533000003_sig.key");
-    renew.prevKeyPass = Optional.of("123456".toCharArray());
-    renew.encPath = basePath.resolve("enc.key");
-    renew.sigPath = basePath.resolve("sig.key");
-    renew.tlsPath = basePath.resolve("tls.key");
-    renew.out = basePath.resolve("renew.pem");
-    renew.call();
-  }
+  //  @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
+  //  public static void main(final String[] args)
+  //      throws CRMFException,
+  //          GeneralSecurityException,
+  //          IOException,
+  //          OperatorCreationException,
+  //          CMSException {
+  //    final var basePath = Path.of("/home/me/work/tmp/renewal");
+  //    final var renew = new Renew();
+  //    renew.prevCertificate = basePath.resolve("EBSnet.EMT.MAK_Signature_539.pem");
+  //    renew.trustChain =
+  //        new Path[] {
+  //          basePath.resolve("DARZ-Test.CA-SN4-2022.pem"),
+  //          //          basePath.resolve("sm-test-root.ca_sn3.der"),
+  //        };
+  //    //    renew.prevKeyPair = basePath.resolve("9984533000003_sig.key");
+  //    renew.prevKeyPair = basePath.resolve("ebsnet.emt.mak_darz_test.ca_.privkey.pem");
+  //    //    renew.prevKeyPass = Optional.of("123456".toCharArray());
+  //    renew.encPath = basePath.resolve("enc.key");
+  //    renew.sigPath = basePath.resolve("sig.key");
+  //    renew.tlsPath = basePath.resolve("tls.key");
+  //    renew.out = basePath.resolve("renew.pem");
+  //    renew.call();
+  //  }
 
   private static X509Certificate[] buildTrustChain(final X509Certificate[]... chains) {
     final var insertionOrderSet = new LinkedHashSet<X509Certificate>();
@@ -97,7 +99,7 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   @SuppressWarnings("PMD.OnlyOneReturn")
-  public static boolean isCompleteTrustChain(final X509Certificate... chain) {
+  private static boolean isCompleteTrustChain(final X509Certificate... chain) {
     if (chain.length < MIN_CHAIN_LENGTH) {
       return false;
     }
@@ -124,6 +126,10 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     return endsWithRoot;
   }
 
+  private static boolean usesNewTriple(final KeyPair prevKeyPair, final Triple<KeyPair> newTriple) {
+    return newTriple.stream().noneMatch(t -> t.equals(prevKeyPair));
+  }
+
   @Override
   public Void call()
       throws GeneralSecurityException,
@@ -148,6 +154,12 @@ public final class Renew extends BaseCommand implements Callable<Void> {
             KeyPairUtil.loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
             KeyPairUtil.loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
             KeyPairUtil.loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
+
+    if (!usesNewTriple(prevKp, keyPairs)) {
+      throw new InvalidParameterException(
+          "Keys must not be reused. One of the new keys is equal to the old signature key. Generate a new triple for the renewal");
+    }
+
     final var metadata = CSRMetadata.fromCertificate(prevCerts[0]);
 
     final var innerCSR = Initial.generateCertReqMessages(keyPairs, metadata);

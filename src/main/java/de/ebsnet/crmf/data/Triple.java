@@ -1,3 +1,9 @@
 package de.ebsnet.crmf.data;
 
-public record Triple<T>(T encryption, T signature, T transport) {}
+import java.util.stream.Stream;
+
+public record Triple<T>(T encryption, T signature, T transport) {
+  public Stream<T> stream() {
+    return Stream.of(encryption, signature, transport);
+  }
+}
