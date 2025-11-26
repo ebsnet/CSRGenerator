@@ -11,13 +11,13 @@ plugins {
   id 'com.diffplug.spotless' version '7.2.1'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.4.2'
+  id 'com.github.spotbugs' version '6.4.6'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
   id 'maven-publish'
   // some lints for dependencies
-  id 'nebula.lint' version '21.1.1'
+  id 'nebula.lint' version '21.1.3'
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.3.3'
 
@@ -108,7 +108,7 @@ pmd {
 }
 
 def versions = [
-  bc: '1.82',
+  bc: '1.83',
 ]
 
 dependencies {
@@ -133,7 +133,7 @@ dependencies {
   compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
 
   constraints {
-    wsdl2java("org.apache.cxf:cxf-core:4.1.3") {
+    wsdl2java("org.apache.cxf:cxf-core:4.1.4") {
       because("CVE-2024-28752")
     }
   }
