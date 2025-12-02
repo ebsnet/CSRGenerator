@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `org.bouncycastle:bcprov-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bctls-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bcutil-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
-- Bump `com.diffplug.spotless` from 7.2.1 to 8.0.0 ([#43](https://github.com/ebsnet/CSRGenerator/pull/43))
+- Bump `com.diffplug.spotless` from 7.2.1 to 8.0.0 ([#43](https://github.com/ebsnet/CSRGenerator/pull/43), [#41](https://github.com/ebsnet/CSRGenerator/pull/41))
 - Bump `nebula.lint` from 21.1.1 to 21.1.3 ([#43](https://github.com/ebsnet/CSRGenerator/pull/43))
 
 ## [1.2.0] 2025-08-27
