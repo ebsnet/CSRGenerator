@@ -7,14 +7,18 @@ import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-/** Entrypoint. */
+/** CLI Entrypoint. */
 @Command(
     name = "EBSnet CSRGenerator",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     description = "Create SM PKI Compatible CSRs",
-    // TODO: enable subcommands once they work
-    subcommands = {Initial.class, PEM2PKCS12.class /* , Renew.class, SendRequest.class */})
+    subcommands = {
+      Initial.class,
+      PEM2PKCS12.class,
+      Renew.class,
+      SendRequest.class,
+    })
 @SuppressWarnings("PMD.UseUtilityClass")
 public final class CSRGenerator {
   private static final AtomicBoolean IS_INIT = new AtomicBoolean(false);
@@ -29,24 +33,7 @@ public final class CSRGenerator {
    * @param args
    */
   public static void main(final String[] args) {
-    // final var new_args =
-    // new String[] {
-    // "renew",
-    // "--encryption",
-    // "/tmp/csr_test/enc.pem",
-    // "--signature",
-    // "/tmp/csr_test/sig.pem",
-    // "--tls",
-    // "/tmp/csr_test/tls.pem",
-    // "--previous-certificate",
-    // "/tmp/csr_test/enc_cert.pem",
-    // "--previous-keypair",
-    // "/tmp/csr_test/enc_key.pem",
-    // "--out",
-    // "/tmp/csr_test/out.pem"
-    // };
     System.exit(new CommandLine(new CSRGenerator()).execute(args));
-    // System.exit(new CommandLine(new CSRGenerator()).execute(new_args));
   }
 
   /**

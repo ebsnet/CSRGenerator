@@ -8,16 +8,16 @@ buildscript {
 plugins {
   id 'application'
   // auto format source files
-  id 'com.diffplug.spotless' version '7.2.1'
+  id 'com.diffplug.spotless' version '8.0.0'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.4.2'
+  id 'com.github.spotbugs' version '6.4.3'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
   id 'maven-publish'
   // some lints for dependencies
-  id 'nebula.lint' version '21.1.1'
+  id 'nebula.lint' version '21.1.3'
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.3.3'
 
@@ -34,7 +34,8 @@ dependencyLocking {
 
 spotless {
   java {
-    googleJavaFormat('1.24.0')
+    forbidWildcardImports()
+    googleJavaFormat()
   }
 }
 
@@ -83,7 +84,8 @@ repositories {
   mavenCentral()
 }
 
-tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+import com.github.spotbugs.snom.SpotBugsTask
+tasks.withType(SpotBugsTask).configureEach {
   reports {
     html.required = true
     xml.required = true
@@ -181,19 +183,4 @@ spotlessJava {
   dependsOn ':wsdl2java'
 }
 
-void prepare() {
-  if (System.env['CI_JOB_ID'] == null) {
-    String[] hooks = ['pre-commit', 'post-commit']
-    hooks.findAll {
-      !(new File(rootProject.rootDir, '.git/hooks/' + it).exists())
-    }.each {
-      println 'Linking ' + it
-      java.nio.file.Files.createSymbolicLink(
-        new File(rootProject.rootDir, '.git/hooks/' + it).toPath(),
-        new File(rootProject.rootDir, 'hooks/' + it).toPath()
-      )
-    }
-  }
-}
-// prepare()
 // vim: set filetype=groovy ts=2 sw=2 tw=120 et :

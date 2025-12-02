@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changes
+
+- Implement generation and sending of certificate renewal requests ([#43](https://github.com/ebsnet/CSRGenerator/pull/43))
+
 ### Dependencies
 - Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 2.3.3 to 4.0.4 ([#1](https://github.com/ebsnet/CSRGenerator/pull/1), [#34](https://github.com/ebsnet/CSRGenerator/pull/34), [#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 2.3.3 to 4.0.2 ([#2](https://github.com/ebsnet/CSRGenerator/pull/2), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
@@ -12,13 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `com.sun.xml.ws:jaxws-rt` from 2.3.7 to 4.0.3 ([#4](https://github.com/ebsnet/CSRGenerator/pull/4), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `com.sun.xml.ws:jaxws-ri` from 2.3.7 to 4.0.3 ([#5](https://github.com/ebsnet/CSRGenerator/pull/5), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `jakarta.xml.soap:jakarta.xml.soap-api` from 1.4.2 to 3.0.2 ([#6](https://github.com/ebsnet/CSRGenerator/pull/6), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
-- Bump `com.github.spotbugs` from 6.2.5 to 6.4.2 ([#36](https://github.com/ebsnet/CSRGenerator/pull/36), [#37](https://github.com/ebsnet/CSRGenerator/pull/37), [#38](https://github.com/ebsnet/CSRGenerator/pull/38), [#40](https://github.com/ebsnet/CSRGenerator/pull/40))
+- Bump `com.github.spotbugs` from 6.2.5 to 6.4.3 ([#36](https://github.com/ebsnet/CSRGenerator/pull/36), [#37](https://github.com/ebsnet/CSRGenerator/pull/37), [#38](https://github.com/ebsnet/CSRGenerator/pull/38), [#40](https://github.com/ebsnet/CSRGenerator/pull/40), [#43](https://github.com/ebsnet/CSRGenerator/pull/43))
 - Bump `jakarta.xml.soap:jakarta.xml.soap-api` from 1.4.2 to 3.0.2 ([#6](https://github.com/ebsnet/CSRGenerator/pull/6), [#34](https://github.com/ebsnet/CSRGenerator/pull/34))
 - Bump `org.ajoberstar.grgit` from 5.3.2 to 5.3.3 ([#37](https://github.com/ebsnet/CSRGenerator/pull/37))
 - Bump `org.bouncycastle:bcpkix-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bcprov-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bctls-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
 - Bump `org.bouncycastle:bcutil-jdk18on` from 1.81 to 1.82 ([#40](https://github.com/ebsnet/CSRGenerator/pull/40))
+- Bump `com.diffplug.spotless` from 7.2.1 to 8.0.0 ([#43](https://github.com/ebsnet/CSRGenerator/pull/43))
+- Bump `nebula.lint` from 21.1.1 to 21.1.3 ([#43](https://github.com/ebsnet/CSRGenerator/pull/43))
 
 ## [1.2.0] 2025-08-27
 

@@ -1,5 +1,8 @@
 package de.ebsnet.crmf;
 
+import de.ebsnet.crmf.data.CSRMetadata;
+import de.ebsnet.crmf.data.Triple;
+import de.ebsnet.crmf.util.KeyPairUtil;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -12,10 +15,9 @@ import java.security.NoSuchProviderException;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.crmf.CRMFException;
+import org.bouncycastle.cert.crmf.CertificateReqMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import picocli.CommandLine.Command;
@@ -83,34 +85,53 @@ public final class Initial extends BaseCommand implements Callable<Void> {
 
   @Override
   public Void call() throws CRMFException, IOException, OperatorCreationException {
-    final var normalizedName = this.name.contains(".EMT.MAK") ? this.name : this.name + ".EMT.MAK";
-    final var dirName =
-        Stream.of(
-                Optional.of(normalizedName).map(cn -> RDN_CN + "=" + cn),
-                Optional.of(this.pki).map(o -> RDN_O + "=" + o),
-                Optional.of(this.gln).map(ou -> RDN_OU + "=" + ou),
-                Optional.of(this.country).map(c -> RDN_C + "=" + c),
-                this.city.map(c -> RDN_L + "=" + c),
-                this.street.map(s -> RDN_STREET + "=" + s),
-                this.state.map(st -> RDN_ST + "=" + st),
-                this.postalCode.map(pc -> RDN_PC + "=" + pc))
-            .flatMap(Optional::stream)
-            .collect(Collectors.joining(","));
-    final var subject = new X500Name(dirName);
+    final var keyPairs =
+        new Triple<>(
+            KeyPairUtil.loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
+            KeyPairUtil.loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
+            KeyPairUtil.loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
+    final var metadata =
+        new CSRMetadata(
+            this.name,
+            this.gln,
+            this.uri,
+            this.email,
+            this.pki,
+            this.country,
+            this.state,
+            this.city,
+            this.postalCode,
+            this.street);
 
-    final var sigKp = loadKeyPair(this.sigPath);
-    final var sigCrmf = certReqMsg(sigKp, KeyType.SIG, subject, this.uri, this.email);
+    final var pkiMsg = generateCSR(keyPairs, metadata);
 
-    final var encKp = loadKeyPair(this.encPath);
-    final var encCrmf = certReqMsg(encKp, KeyType.ENC, subject, this.uri, this.email);
-
-    final var tlsKp = loadKeyPair(this.tlsPath);
-    final var tlsCrmf = certReqMsg(tlsKp, KeyType.TLS, subject, this.uri, this.email);
-
-    final var crmf = merge(tlsCrmf, encCrmf, sigCrmf);
-    final var pkiMsg = wrap(crmf);
     Files.write(this.out, pkiMsg.getEncoded(), StandardOpenOption.CREATE_NEW);
     return null;
+  }
+
+  public static ContentInfo generateCSR(final Triple<KeyPair> keyPairs, final CSRMetadata metadata)
+      throws CRMFException, IOException, OperatorCreationException {
+    return CSRUtil.asContentInfo(generateCertReqMessages(keyPairs, metadata));
+  }
+
+  public static CertificateReqMessages generateCertReqMessages(
+      final Triple<KeyPair> keyPairs, final CSRMetadata metadata)
+      throws CRMFException, IOException, OperatorCreationException {
+    final var subject = metadata.toSubject();
+
+    final var sigCrmf =
+        CSRUtil.certReqMsg(
+            keyPairs.signature(), KeyType.SIG, subject, metadata.uri(), metadata.email());
+
+    final var encCrmf =
+        CSRUtil.certReqMsg(
+            keyPairs.encryption(), KeyType.ENC, subject, metadata.uri(), metadata.email());
+
+    final var tlsCrmf =
+        CSRUtil.certReqMsg(
+            keyPairs.transport(), KeyType.TLS, subject, metadata.uri(), metadata.email());
+
+    return CSRUtil.buildCertificateRequestMessages(sigCrmf, encCrmf, tlsCrmf);
   }
 
   /**

@@ -20,7 +20,9 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -49,11 +51,18 @@ public final class SendRequest implements Callable<Void> {
     CSRGenerator.init();
   }
 
+  private static final Logger LOG = Logger.getLogger(SendRequest.class.getSimpleName());
+
   @Option(
       names = {"--tls-key"},
       required = true,
       description = "Path to the currently valid TLS key")
   private Path tlsKeyPath;
+
+  @Option(
+      names = {"--tls-key-pass"},
+      description = "Password for the TLS key")
+  private Optional<char[]> tlsKeyPass;
 
   @Option(
       names = {"--tls-cert"},
@@ -70,7 +79,7 @@ public final class SendRequest implements Callable<Void> {
   @Option(
       names = {"--out"},
       required = true,
-      description = "Output file")
+      description = "Output directory to write the new certificates into")
   private Path out;
 
   @Option(
@@ -79,27 +88,26 @@ public final class SendRequest implements Callable<Void> {
       description = "Webservice URI")
   private URI uri;
 
-  @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
-  public static void main(final String[] args)
-      throws UnrecoverableKeyException,
-          CertificateException,
-          IOException,
-          NoSuchAlgorithmException,
-          KeyStoreException,
-          NoSuchProviderException,
-          InterruptedException,
-          KeyManagementException {
-    final var sendRequest = new SendRequest();
-    sendRequest.tlsCertPath =
-        Path.of("/home/me/Dokumente/work/keys/old/personalTLSCertificate.pem");
-    sendRequest.tlsKeyPath = Path.of("/home/me/Dokumente/work/keys/old/tls.pem");
-    sendRequest.csrPath = Path.of("./keys/new/csr.pem");
-    sendRequest.uri =
-        //      URI.create("http://localhost:8080");
-        URI.create("https://test.sub-ca.da-rz.net:8443/metering-ca/services/SmartMeterService");
-    sendRequest.out = Path.of("/home/me/Dokumente/work");
-    sendRequest.call();
-  }
+  //  @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
+  //  public static void main(final String[] args)
+  //      throws UnrecoverableKeyException,
+  //          CertificateException,
+  //          IOException,
+  //          NoSuchAlgorithmException,
+  //          KeyStoreException,
+  //          NoSuchProviderException,
+  //          KeyManagementException {
+  //    final var sendRequest = new SendRequest();
+  //    sendRequest.tlsCertPath =
+  //        Path.of("/home/me/Dokumente/work/keys/old/personalTLSCertificate.pem");
+  //    sendRequest.tlsKeyPath = Path.of("/home/me/Dokumente/work/keys/old/tls.pem");
+  //    sendRequest.csrPath = Path.of("./keys/new/csr.pem");
+  //    sendRequest.uri =
+  //        //      URI.create("http://localhost:8080");
+  //        URI.create("https://test.sub-ca.da-rz.net:8443/metering-ca/services/SmartMeterService");
+  //    sendRequest.out = Path.of("/home/me/Dokumente/work");
+  //    sendRequest.call();
+  //  }
 
   private SSLContext sslContext()
       throws NoSuchAlgorithmException,
@@ -112,7 +120,8 @@ public final class SendRequest implements Callable<Void> {
     final var pwd = Utils.randomPwd();
     final var sslContext =
         SSLContext.getInstance("TLSv1.2", BouncyCastleJsseProvider.PROVIDER_NAME);
-    final var keyStore = PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsCertPath, "tls", pwd);
+    final var keyStore =
+        PEM2PKCS12.pemToPKCS12(this.tlsKeyPath, this.tlsKeyPass, this.tlsCertPath, "tls", pwd);
 
     final var kmf = KeyManagerFactory.getInstance("PKIX", BouncyCastleJsseProvider.PROVIDER_NAME);
 
@@ -124,7 +133,6 @@ public final class SendRequest implements Callable<Void> {
   }
 
   @Override
-  @SuppressWarnings("PMD.SystemPrintln")
   public Void call()
       throws IOException,
           UnrecoverableKeyException,
@@ -132,12 +140,12 @@ public final class SendRequest implements Callable<Void> {
           NoSuchAlgorithmException,
           KeyStoreException,
           NoSuchProviderException,
-          KeyManagementException,
-          InterruptedException {
+          KeyManagementException {
     try {
       final var sslContext = sslContext();
 
       final var csr = Files.readAllBytes(this.csrPath);
+      Files.createDirectories(out);
 
       HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
       final var url = new URL(this.uri.toString());
@@ -156,25 +164,33 @@ public final class SendRequest implements Callable<Void> {
       req.setCallbackIndicator(CallbackIndicatorType.CALLBACK_NOT_POSSIBLE);
       req.setCertReq(csr);
       final var serviceStatus = port.requestCertificate(req);
-      System.out.println("Return Code: " + serviceStatus.getReturnCode());
-      System.out.println("Return Code Message: " + serviceStatus.getReturnCodeMessage());
+      LOG.info(() -> "Return Code: " + serviceStatus.getReturnCode());
+      LOG.info(() -> "Return Code Message: " + serviceStatus.getReturnCodeMessage());
       final var b64 = Base64.getEncoder();
 
-      final var certTypes = new String[] {"_tls.cer", "_enc.cer", "_sig.cer"};
+      final var certTypes =
+          new String[] {
+            "_enc.pem", "_sig.pem", "_tls.pem",
+          };
       var cnt = 0;
 
       for (final var crt : serviceStatus.getCertificateSeq().getCertificate()) {
-        System.out.println("CRT: " + b64.encodeToString(crt));
-        Files.writeString(
-            out.resolve(certTypes[cnt]), b64.encodeToString(crt), StandardOpenOption.CREATE_NEW);
-        cnt += 1;
+        try {
+          final var encoded = b64.encodeToString(crt);
+          final var type = certTypes[cnt];
+          LOG.info(() -> "CRT " + type + ": " + encoded);
+          Files.writeString(out.resolve(type), encoded, StandardOpenOption.CREATE_NEW);
+          cnt += 1;
+        } catch (IOException ex) {
+          LOG.severe(() -> "error writing certificate to disk: " + ex);
+        }
       }
 
       return null;
     } catch (ServerSOAPFaultException ssfe) {
-      System.out.println(ssfe.getFault());
-      System.out.println("Code: " + ssfe.getFault().getFaultCode());
-      System.out.println("Text: " + ssfe.getFault().getFaultString());
+      LOG.severe(() -> ssfe.getFault().toString());
+      LOG.severe(() -> "Code: " + ssfe.getFault().getFaultCode());
+      LOG.severe(() -> "Text: " + ssfe.getFault().getFaultString());
       throw ssfe;
     }
   }
