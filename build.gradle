@@ -111,6 +111,7 @@ pmd {
 
 def versions = [
   bc: '1.83',
+  junit: '5.13.4',
 ]
 
 dependencies {
@@ -127,6 +128,12 @@ dependencies {
   implementation "jakarta.xml.soap:jakarta.xml.soap-api:3.0.2"
   implementation "jakarta.xml.ws:jakarta.xml.ws-api:4.0.2"
 
+  testImplementation(platform("org.junit:junit-bom:${versions.junit}"))
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+
   // additional spotbugs detectors
   spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
   // TODO activate and fix warnings
@@ -139,6 +146,10 @@ dependencies {
       because("CVE-2024-28752")
     }
   }
+}
+
+test {
+  useJUnitPlatform()
 }
 
 def latestCommitHash = grgit.head().abbreviatedId
