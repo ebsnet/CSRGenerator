@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] 2025-12-04
+
+### Changes
+- PEM encode renewed certificates ([#51](https://github.com/ebsnet/CSRGenerator/pull/51))
+
 ## [1.3.0] 2025-12-02
 
 ### Changes
