@@ -31,6 +31,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.xml.namespace.QName;
 import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemObjectGenerator;
+import org.bouncycastle.util.io.pem.PemWriter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import uri.bsi_bund_de.smart_meter_pki_protocol._1.CallbackIndicatorType;
@@ -176,10 +179,10 @@ public final class SendRequest implements Callable<Void> {
 
       for (final var crt : serviceStatus.getCertificateSeq().getCertificate()) {
         try {
-          final var encoded = b64.encodeToString(crt);
           final var type = certTypes[cnt];
+          writePem(out.resolve(type), crt, "CERTIFICATE");
+          final var encoded = b64.encodeToString(crt);
           LOG.info(() -> "CRT " + type + ": " + encoded);
-          Files.writeString(out.resolve(type), encoded, StandardOpenOption.CREATE_NEW);
           cnt += 1;
         } catch (IOException ex) {
           LOG.severe(() -> "error writing certificate to disk: " + ex);
@@ -192,6 +195,18 @@ public final class SendRequest implements Callable<Void> {
       LOG.severe(() -> "Code: " + ssfe.getFault().getFaultCode());
       LOG.severe(() -> "Text: " + ssfe.getFault().getFaultString());
       throw ssfe;
+    }
+  }
+
+  /* default */ static void writePem(final Path path, final byte[] content, final String type)
+      throws IOException {
+    writePem(path, new PemObject(type, content));
+  }
+
+  private static void writePem(final Path path, final PemObjectGenerator content)
+      throws IOException {
+    try (var writer = new PemWriter(Files.newBufferedWriter(path, StandardOpenOption.CREATE_NEW))) {
+      writer.writeObject(content);
     }
   }
 
