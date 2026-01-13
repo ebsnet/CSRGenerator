@@ -1,6 +1,8 @@
 package de.ebsnet.crmf;
 
+import de.ebsnet.crmf.exception.InvalidCertificateChain;
 import de.ebsnet.crmf.util.KeyPairUtil;
+import de.ebsnet.crmf.util.X509Util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -25,6 +28,9 @@ import picocli.CommandLine.Option;
     mixinStandardHelpOptions = true,
     description = "Convert key pair and certificate in PEM format to a PKCS12 keystore")
 public final class PEM2PKCS12 implements Callable<Void> {
+
+  private static final Logger LOG = Logger.getLogger(PEM2PKCS12.class.getSimpleName());
+
   @Option(
       names = {"--out"},
       required = true,
@@ -73,23 +79,32 @@ public final class PEM2PKCS12 implements Callable<Void> {
           KeyStoreException,
           NoSuchProviderException,
           NoSuchAlgorithmException {
-    final var keyStore = loadKeyStore(this.out, this.keyStorePass);
-    if (keyStore.containsAlias(this.alias)) {
-      throw new IllegalStateException("alias already exists in the keystore");
-    }
-    final var keyPair = KeyPairUtil.loadKeyPair(this.keyPairPath, this.keyPairPass);
-    final var certificate = BaseCommand.loadCertificateChain(this.certificatePath);
-    final var chain = new ArrayList<>(List.of(certificate));
+    try {
+      final var keyStore = loadKeyStore(this.out, this.keyStorePass);
+      if (keyStore.containsAlias(this.alias)) {
+        throw new IllegalStateException("alias already exists in the keystore");
+      }
+      final var keyPair = KeyPairUtil.loadKeyPair(this.keyPairPath, this.keyPairPass);
+      final var certificate = BaseCommand.loadCertificateChain(this.certificatePath);
+      final var chain = new ArrayList<>(List.of(certificate));
 
-    for (final var trustedCert : trusted) {
-      chain.addAll(List.of(BaseCommand.loadCertificateChain(trustedCert)));
-    }
+      for (final var trustedCert : trusted) {
+        chain.addAll(List.of(BaseCommand.loadCertificateChain(trustedCert)));
+      }
 
-    keyStore.setKeyEntry(
-        this.alias, keyPair.getPrivate(), this.keyStorePass, chain.toArray(new X509Certificate[0]));
+      X509Util.validateCertificateChain(chain.toArray(new X509Certificate[0]));
 
-    try (var outStream = Files.newOutputStream(this.out, StandardOpenOption.CREATE_NEW)) {
-      keyStore.store(outStream, this.keyStorePass);
+      keyStore.setKeyEntry(
+          this.alias,
+          keyPair.getPrivate(),
+          this.keyStorePass,
+          chain.toArray(new X509Certificate[0]));
+
+      try (var outStream = Files.newOutputStream(this.out, StandardOpenOption.CREATE_NEW)) {
+        keyStore.store(outStream, this.keyStorePass);
+      }
+    } catch (InvalidCertificateChain ex) {
+      LOG.severe(() -> "invalid certificate chain: " + ex.getMessage());
     }
     return null;
   }

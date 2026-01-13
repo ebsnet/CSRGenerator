@@ -2,7 +2,9 @@ package de.ebsnet.crmf;
 
 import de.ebsnet.crmf.data.CSRMetadata;
 import de.ebsnet.crmf.data.Triple;
+import de.ebsnet.crmf.exception.InvalidCertificateChain;
 import de.ebsnet.crmf.util.KeyPairUtil;
+import de.ebsnet.crmf.util.X509Util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +42,6 @@ public final class Renew extends BaseCommand implements Callable<Void> {
   }
 
   private static final Logger LOG = Logger.getLogger(Renew.class.getSimpleName());
-  private static final int MIN_CHAIN_LENGTH = 2;
 
   @Option(
       names = {"--previous-keypair"},
@@ -98,34 +99,6 @@ public final class Renew extends BaseCommand implements Callable<Void> {
     return insertionOrderSet.toArray(new X509Certificate[0]);
   }
 
-  @SuppressWarnings("PMD.OnlyOneReturn")
-  private static boolean isCompleteTrustChain(final X509Certificate... chain) {
-    if (chain.length < MIN_CHAIN_LENGTH) {
-      return false;
-    }
-    for (int i = 0; i < chain.length - 1; i++) {
-      if (!chain[i].getIssuerX500Principal().equals(chain[i + 1].getSubjectX500Principal())) {
-        final var idx = i;
-        LOG.warning(
-            () ->
-                chain[idx].getSubjectX500Principal()
-                    + " is not signed by "
-                    + chain[idx + 1].getSubjectX500Principal());
-        return false;
-      }
-    }
-
-    final var root = chain[chain.length - 1];
-    final var endsWithRoot = root.getSubjectX500Principal().equals(root.getIssuerX500Principal());
-    if (!endsWithRoot) {
-      LOG.warning(
-          () ->
-              "Certificate chain does not end with root certificate. Ends with "
-                  + root.getSubjectX500Principal());
-    }
-    return endsWithRoot;
-  }
-
   private static boolean usesNewTriple(final KeyPair prevKeyPair, final Triple<KeyPair> newTriple) {
     return newTriple.stream().noneMatch(t -> t.equals(prevKeyPair));
   }
@@ -137,40 +110,42 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           CRMFException,
           OperatorCreationException,
           CMSException {
-    final var prevKp = KeyPairUtil.loadKeyPair(this.prevKeyPair, this.prevKeyPass);
-    final var prevCerts = loadCertificateChain(this.prevCertificate);
-    var buildChain = new X509Certificate[0];
-    for (final var chain : this.trustChain) {
-      buildChain = buildTrustChain(buildChain, loadCertificateChain(chain));
+    try {
+      final var prevKp = KeyPairUtil.loadKeyPair(this.prevKeyPair, this.prevKeyPass);
+      final var prevCerts = loadCertificateChain(this.prevCertificate);
+      var buildChain = new X509Certificate[0];
+      for (final var chain : this.trustChain) {
+        buildChain = buildTrustChain(buildChain, loadCertificateChain(chain));
+      }
+      final var allCerts = buildTrustChain(prevCerts, buildChain);
+
+      X509Util.validateCertificateChain(allCerts);
+
+      final var keyPairs =
+          new Triple<>(
+              KeyPairUtil.loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
+              KeyPairUtil.loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
+              KeyPairUtil.loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
+
+      if (!usesNewTriple(prevKp, keyPairs)) {
+        throw new InvalidParameterException(
+            "Keys must not be reused. One of the new keys is equal to the old signature key. Generate a new triple for the renewal");
+      }
+
+      final var metadata = CSRMetadata.fromCertificate(prevCerts[0]);
+
+      final var innerCSR = Initial.generateCertReqMessages(keyPairs, metadata);
+      final var signed = RenewalUtil.outerSignature(prevKp.getPrivate(), allCerts, innerCSR);
+
+      final var signedASN1 = signed.toASN1Structure();
+
+      final var result = CSRUtil.asContentInfo(signedASN1.getContent(), true);
+
+      Files.write(this.out, result.getEncoded(), StandardOpenOption.CREATE_NEW);
+
+    } catch (InvalidCertificateChain ex) {
+      LOG.severe(() -> "invalid certificate chain: " + ex.getMessage());
     }
-    final var allCerts = buildTrustChain(prevCerts, buildChain);
-
-    if (!isCompleteTrustChain(allCerts)) {
-      LOG.warning("incomplete trust chain for signature certificate");
-    }
-
-    final var keyPairs =
-        new Triple<>(
-            KeyPairUtil.loadKeyPair(this.encPath, this.passForType(KeyType.ENC)),
-            KeyPairUtil.loadKeyPair(this.sigPath, this.passForType(KeyType.SIG)),
-            KeyPairUtil.loadKeyPair(this.tlsPath, this.passForType(KeyType.TLS)));
-
-    if (!usesNewTriple(prevKp, keyPairs)) {
-      throw new InvalidParameterException(
-          "Keys must not be reused. One of the new keys is equal to the old signature key. Generate a new triple for the renewal");
-    }
-
-    final var metadata = CSRMetadata.fromCertificate(prevCerts[0]);
-
-    final var innerCSR = Initial.generateCertReqMessages(keyPairs, metadata);
-    final var signed = RenewalUtil.outerSignature(prevKp.getPrivate(), allCerts, innerCSR);
-
-    final var signedASN1 = signed.toASN1Structure();
-
-    final var result = CSRUtil.asContentInfo(signedASN1.getContent(), true);
-
-    Files.write(this.out, result.getEncoded(), StandardOpenOption.CREATE_NEW);
-
     return null;
   }
 }
