@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changes
+
+- Make invalid certificate chains a hard error and return early ([#55](https://github.com/ebsnet/CSRGenerator/pull/55))
+
 ### Dependencies
 - Bump `org.junit:junit-bom` from 5.13.4 to 6.0.2 ([#52](https://github.com/ebsnet/CSRGenerator/pull/52), [#54](https://github.com/ebsnet/CSRGenerator/pull/54))
 - Bump `com.github.spotbugs` from 6.4.7 to 6.4.8 ([#53](https://github.com/ebsnet/CSRGenerator/pull/53))
