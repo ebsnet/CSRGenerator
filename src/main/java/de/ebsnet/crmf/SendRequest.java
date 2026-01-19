@@ -178,7 +178,7 @@ public final class SendRequest implements Callable<Void> {
               type.map(KeyType::filename)
                   .orElseGet(
                       () -> {
-                        final var fallbackName = String.valueOf(Utils.randomPwd());
+                        final var fallbackName = String.valueOf(Utils.randomPwd()) + ".pem";
                         LOG.severe(() -> "cannot determine key type... storing in " + fallbackName);
                         return fallbackName;
                       });
