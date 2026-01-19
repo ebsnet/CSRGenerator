@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] 2026-01-19
+
 ### Changes
 
 - Detect certificate types based on (extended) KeyUsage fields in the certificate ([#56](https://github.com/ebsnet/CSRGenerator/pull/56))
