@@ -171,19 +171,20 @@ public final class SendRequest implements Callable<Void> {
       LOG.info(() -> "Return Code Message: " + serviceStatus.getReturnCodeMessage());
       final var b64 = Base64.getEncoder();
 
-      final var certTypes =
-          new String[] {
-            "_enc.pem", "_sig.pem", "_tls.pem",
-          };
-      var cnt = 0;
-
       for (final var crt : serviceStatus.getCertificateSeq().getCertificate()) {
         try {
-          final var type = certTypes[cnt];
-          writePem(out.resolve(type), crt, "CERTIFICATE");
+          final var type = KeyType.fromCertificate(crt);
+          final var filename =
+              type.map(KeyType::filename)
+                  .orElseGet(
+                      () -> {
+                        final var fallbackName = String.valueOf(Utils.randomPwd()) + ".pem";
+                        LOG.severe(() -> "cannot determine key type... storing in " + fallbackName);
+                        return fallbackName;
+                      });
+          writePem(out.resolve(filename), crt, "CERTIFICATE");
           final var encoded = b64.encodeToString(crt);
           LOG.info(() -> "CRT " + type + ": " + encoded);
-          cnt += 1;
         } catch (IOException ex) {
           LOG.severe(() -> "error writing certificate to disk: " + ex);
         }

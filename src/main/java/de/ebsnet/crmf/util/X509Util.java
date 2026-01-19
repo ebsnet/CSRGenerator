@@ -1,6 +1,13 @@
 package de.ebsnet.crmf.util;
 
 import de.ebsnet.crmf.exception.InvalidCertificateChain;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 public final class X509Util {
@@ -32,6 +39,30 @@ public final class X509Util {
           "Certificate chain does not end with root certificate. Ends with "
               + root.getSubjectX500Principal());
     }
+  }
+
+  /** Load a certificate chain from a file. */
+  public static X509Certificate[] loadCertificateChain(final Path path)
+      throws CertificateException, IOException {
+    try (var inStream = Files.newInputStream(path)) {
+      return loadCertificateChain(inStream);
+    }
+  }
+
+  /** Load a certificate chain from memory. */
+  public static X509Certificate[] loadCertificateChain(final byte[] cert)
+      throws CertificateException, IOException {
+    try (var inStream = new ByteArrayInputStream(cert)) {
+      return loadCertificateChain(inStream);
+    }
+  }
+
+  private static X509Certificate[] loadCertificateChain(final InputStream inStream)
+      throws CertificateException {
+    final var fact = CertificateFactory.getInstance("X.509");
+    return fact.generateCertificates(inStream).stream()
+        .map(c -> (X509Certificate) c)
+        .toArray(X509Certificate[]::new);
   }
 
   private X509Util() {}

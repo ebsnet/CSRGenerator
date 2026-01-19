@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] 2026-01-19
+
+### Changes
+
+- Detect certificate types based on (extended) KeyUsage fields in the certificate ([#56](https://github.com/ebsnet/CSRGenerator/pull/56))
+- Fail when trying to create a PKCS12 KeyStore from a key and certificate that do not match ([#56](https://github.com/ebsnet/CSRGenerator/pull/56))
+
 ## [1.4.0] 2026-01-13
 
 ### Changes

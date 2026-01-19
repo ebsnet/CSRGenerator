@@ -112,10 +112,10 @@ public final class Renew extends BaseCommand implements Callable<Void> {
           CMSException {
     try {
       final var prevKp = KeyPairUtil.loadKeyPair(this.prevKeyPair, this.prevKeyPass);
-      final var prevCerts = loadCertificateChain(this.prevCertificate);
+      final var prevCerts = X509Util.loadCertificateChain(this.prevCertificate);
       var buildChain = new X509Certificate[0];
       for (final var chain : this.trustChain) {
-        buildChain = buildTrustChain(buildChain, loadCertificateChain(chain));
+        buildChain = buildTrustChain(buildChain, X509Util.loadCertificateChain(chain));
       }
       final var allCerts = buildTrustChain(prevCerts, buildChain);
 

@@ -1,11 +1,6 @@
 package de.ebsnet.crmf;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Optional;
 import picocli.CommandLine.Option;
 
@@ -71,23 +66,5 @@ public class BaseCommand {
           case TLS -> this.tlsPass;
         })
         .or(() -> this.keyPass);
-  }
-
-  /**
-   * Load a certificate chain from a file.
-   *
-   * @param path
-   * @return
-   * @throws CertificateException
-   * @throws IOException
-   */
-  /* default */ static X509Certificate[] loadCertificateChain(final Path path)
-      throws CertificateException, IOException {
-    final var fact = CertificateFactory.getInstance("X.509");
-    try (var inStream = Files.newInputStream(path)) {
-      return fact.generateCertificates(inStream).stream()
-          .map(c -> (X509Certificate) c)
-          .toArray(X509Certificate[]::new);
-    }
   }
 }

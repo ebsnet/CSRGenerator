@@ -14,7 +14,9 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
@@ -85,11 +87,11 @@ public final class PEM2PKCS12 implements Callable<Void> {
         throw new IllegalStateException("alias already exists in the keystore");
       }
       final var keyPair = KeyPairUtil.loadKeyPair(this.keyPairPath, this.keyPairPass);
-      final var certificate = BaseCommand.loadCertificateChain(this.certificatePath);
+      final var certificate = X509Util.loadCertificateChain(this.certificatePath);
       final var chain = new ArrayList<>(List.of(certificate));
 
       for (final var trustedCert : trusted) {
-        chain.addAll(List.of(BaseCommand.loadCertificateChain(trustedCert)));
+        chain.addAll(List.of(X509Util.loadCertificateChain(trustedCert)));
       }
 
       X509Util.validateCertificateChain(chain.toArray(new X509Certificate[0]));
@@ -151,7 +153,18 @@ public final class PEM2PKCS12 implements Callable<Void> {
           NoSuchAlgorithmException,
           NoSuchProviderException {
     final var keyPair = KeyPairUtil.loadKeyPair(key, keyPass);
-    final var certificate = BaseCommand.loadCertificateChain(cert);
+    final var certificate = X509Util.loadCertificateChain(cert);
+    final var kpPub = keyPair.getPublic();
+    final var cerPub = certificate[0].getPublicKey();
+    if (!Objects.equals(kpPub, cerPub)) {
+      final var encoder = Base64.getEncoder();
+      final var message =
+          "KeyPair - Certificate Missmatch. Got KeyPair with PubKey: "
+              + encoder.encodeToString(kpPub.getEncoded())
+              + " certificate with PubKey: "
+              + encoder.encodeToString(cerPub.getEncoded());
+      throw new CertificateException(message);
+    }
     final var keyStore = loadKeyStore(null, pass);
     keyStore.setKeyEntry(alias, keyPair.getPrivate(), pass, certificate);
     return keyStore;
