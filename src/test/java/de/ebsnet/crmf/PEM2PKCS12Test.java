@@ -1,11 +1,7 @@
 package de.ebsnet.crmf;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,16 +28,12 @@ import org.junit.jupiter.api.Test;
   }
 
   @Test
-  /* default */ void matchingKeyAndCert()
-      throws CertificateException,
-          KeyStoreException,
-          IOException,
-          NoSuchAlgorithmException,
-          NoSuchProviderException {
-    final var pkcs12 =
-        PEM2PKCS12.pemToPKCS12(
-            this.keyA, Optional.empty(), this.certA, "alias", "pass".toCharArray());
-    Assertions.assertNotNull(pkcs12, "KeyStore for matching private key and certificate works");
+  /* default */ void matchingKeyAndCert() {
+    Assertions.assertDoesNotThrow(
+        () ->
+            PEM2PKCS12.pemToPKCS12(
+                this.keyA, Optional.empty(), this.certA, "alias", "pass".toCharArray()),
+        "KeyStore for matching private key and certificate works");
   }
 
   @Test
