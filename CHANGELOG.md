@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-
-- Bump `com.diffplug.spotless` from 8.1.0 to 8.2.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57))
+- Bump `com.diffplug.spotless` from 8.1.0 to 8.2.1 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59))
+- Bump `gradle-wrapper` from 9.0.0 to 9.3.1 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59))
 - Bump `gradle-wrapper` from 9.0.0 to 9.3.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57))
 
 ## [1.4.1] 2026-01-19
