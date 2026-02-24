@@ -126,7 +126,7 @@ dependencies {
   implementation "com.sun.xml.ws:jaxws-rt:4.0.3"
   implementation "jakarta.xml.bind:jakarta.xml.bind-api:4.0.5"
   implementation "jakarta.xml.soap:jakarta.xml.soap-api:3.0.2"
-  implementation "jakarta.xml.ws:jakarta.xml.ws-api:4.0.2"
+  implementation "jakarta.xml.ws:jakarta.xml.ws-api:4.0.3"
 
   testImplementation(platform("org.junit:junit-bom:${versions.junit}"))
   testImplementation "org.junit.jupiter:junit-jupiter-api"

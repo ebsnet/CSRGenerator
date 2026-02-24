@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 4.0.4 to 4.0.5 ([#60](https://github.com/ebsnet/CSRGenerator/pull/60))
 - Bump `org.junit:junit-bom` from 6.0.2 to 6.0.3 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61))
 - Bump `org.apache.cxf:cxf-core` from 4.1.4 to 4.2.0 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61))
+- Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 4.0.2 to 4.0.3 ([#62](https://github.com/ebsnet/CSRGenerator/pull/62))
 
 ## [1.4.1] 2026-01-19
 
