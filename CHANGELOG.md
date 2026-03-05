@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `org.junit:junit-bom` from 6.0.2 to 6.0.3 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61))
 - Bump `org.apache.cxf:cxf-core` from 4.1.4 to 4.2.0 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61))
 - Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 4.0.2 to 4.0.3 ([#62](https://github.com/ebsnet/CSRGenerator/pull/62))
+- Bump `lcollins/pmd-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
+- Bump `lcollins/spotbugs-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
 
 ## [1.4.1] 2026-01-19
 
