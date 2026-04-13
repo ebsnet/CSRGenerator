@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `lcollins/spotbugs-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
 - Bump `com.sun.xml.ws:jaxws-ri` from 4.0.3 to 4.0.4 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68))
 - Bump `com.sun.xml.ws:jaxws-rt` from 4.0.3 to 4.0.4 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68))
+- Bump `softprops/action-gh-release` from 2 to 3 ([#69](https://github.com/ebsnet/CSRGenerator/pull/69))
 
 ## [1.4.1] 2026-01-19
 
