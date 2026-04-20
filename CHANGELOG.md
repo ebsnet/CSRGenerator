@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `org.bouncycastle:bcprov-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bctls-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bcutil-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
-- Bump `com.github.spotbugs` from 6.4.8 to 6.5.0 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
+- Bump `com.github.spotbugs` from 6.4.8 to 6.5.1 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71), [#72](https://github.com/ebsnet/CSRGenerator/pull/72))
 
 ## [1.4.1] 2026-01-19
 
