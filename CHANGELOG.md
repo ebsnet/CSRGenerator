@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Bump `com.diffplug.spotless` from 8.1.0 to 8.4.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59), [#64](https://github.com/ebsnet/CSRGenerator/pull/64), [#67](https://github.com/ebsnet/CSRGenerator/pull/67))
-- Bump `gradle-wrapper` from 9.0.0 to 9.5.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59), [#64](https://github.com/ebsnet/CSRGenerator/pull/64), [#67](https://github.com/ebsnet/CSRGenerator/pull/67), [#74](https://github.com/ebsnet/CSRGenerator/pull/74))
+- Bump `gradle-wrapper` from 9.0.0 to 9.5.1 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59), [#64](https://github.com/ebsnet/CSRGenerator/pull/64), [#67](https://github.com/ebsnet/CSRGenerator/pull/67), [#74](https://github.com/ebsnet/CSRGenerator/pull/74), [#76](https://github.com/ebsnet/CSRGenerator/pull/76))
 - Bump `gradle-wrapper` from 9.0.0 to 9.3.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57))
 - Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 4.0.4 to 4.0.5 ([#60](https://github.com/ebsnet/CSRGenerator/pull/60))
 - Bump `org.junit:junit-bom` from 6.0.2 to 6.0.3 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61))
