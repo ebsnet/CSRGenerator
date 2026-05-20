@@ -142,7 +142,7 @@ dependencies {
   compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
 
   constraints {
-    wsdl2java("org.apache.cxf:cxf-core:4.2.0") {
+    wsdl2java("org.apache.cxf:cxf-core:4.2.1") {
       because("CVE-2024-28752")
     }
   }
