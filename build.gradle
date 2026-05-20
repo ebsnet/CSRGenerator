@@ -111,7 +111,7 @@ pmd {
 
 def versions = [
   bc: '1.84',
-  junit: '6.0.3',
+  junit: '6.1.0',
 ]
 
 dependencies {
