@@ -8,10 +8,10 @@ buildscript {
 plugins {
   id 'application'
   // auto format source files
-  id 'com.diffplug.spotless' version '8.5.1'
+  id 'com.diffplug.spotless' version '8.6.0'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.5.4'
+  id 'com.github.spotbugs' version '6.5.5'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
