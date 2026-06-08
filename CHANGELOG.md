@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-- Bump `com.diffplug.spotless` from 8.1.0 to 8.5.1 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59), [#64](https://github.com/ebsnet/CSRGenerator/pull/64), [#67](https://github.com/ebsnet/CSRGenerator/pull/67), [#77](https://github.com/ebsnet/CSRGenerator/pull/77), [#78](https://github.com/ebsnet/CSRGenerator/pull/78))
+- Bump `com.diffplug.spotless` from 8.1.0 to 8.6.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59), [#64](https://github.com/ebsnet/CSRGenerator/pull/64), [#67](https://github.com/ebsnet/CSRGenerator/pull/67), [#77](https://github.com/ebsnet/CSRGenerator/pull/77), [#78](https://github.com/ebsnet/CSRGenerator/pull/78), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 - Bump `gradle-wrapper` from 9.0.0 to 9.5.1 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57), [#59](https://github.com/ebsnet/CSRGenerator/pull/59), [#64](https://github.com/ebsnet/CSRGenerator/pull/64), [#67](https://github.com/ebsnet/CSRGenerator/pull/67), [#74](https://github.com/ebsnet/CSRGenerator/pull/74), [#77](https://github.com/ebsnet/CSRGenerator/pull/77))
 - Bump `gradle-wrapper` from 9.0.0 to 9.3.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57))
 - Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 4.0.4 to 4.0.5 ([#60](https://github.com/ebsnet/CSRGenerator/pull/60))
@@ -15,15 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 4.0.2 to 4.0.3 ([#62](https://github.com/ebsnet/CSRGenerator/pull/62))
 - Bump `lcollins/pmd-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
 - Bump `lcollins/spotbugs-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
-- Bump `com.sun.xml.ws:jaxws-ri` from 4.0.3 to 4.0.4 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68))
-- Bump `com.sun.xml.ws:jaxws-rt` from 4.0.3 to 4.0.4 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68))
+- Bump `com.sun.xml.ws:jaxws-ri` from 4.0.3 to 4.0.5 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
+- Bump `com.sun.xml.ws:jaxws-rt` from 4.0.3 to 4.0.5 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 - Bump `softprops/action-gh-release` from 2 to 3 ([#69](https://github.com/ebsnet/CSRGenerator/pull/69))
 - Bump `org.bouncycastle:bcpkix-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bcprov-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bctls-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bcutil-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
-- Bump `com.github.spotbugs` from 6.4.8 to 6.5.4 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71), [#72](https://github.com/ebsnet/CSRGenerator/pull/72), [#75](https://github.com/ebsnet/CSRGenerator/pull/75))
-- Bump `nebula.lint` from 21.1.3 to 21.2.0 ([#73](https://github.com/ebsnet/CSRGenerator/pull/73))
+- Bump `com.github.spotbugs` from 6.4.8 to 6.5.5 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71), [#72](https://github.com/ebsnet/CSRGenerator/pull/72), [#75](https://github.com/ebsnet/CSRGenerator/pull/75), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
+- Bump `nebula.lint` from 21.1.3 to 21.2.1 ([#73](https://github.com/ebsnet/CSRGenerator/pull/73), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 
 ## [1.4.1] 2026-01-19
 
