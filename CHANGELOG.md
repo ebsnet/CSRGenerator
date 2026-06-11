@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `gradle-wrapper` from 9.0.0 to 9.3.0 ([#57](https://github.com/ebsnet/CSRGenerator/pull/57))
 - Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 4.0.4 to 4.0.5 ([#60](https://github.com/ebsnet/CSRGenerator/pull/60))
 - Bump `org.junit:junit-bom` from 6.0.2 to 6.1.0 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61), [#79](https://github.com/ebsnet/CSRGenerator/pull/79))
-- Bump `org.apache.cxf:cxf-core` from 4.1.4 to 4.2.1 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61), [#80](https://github.com/ebsnet/CSRGenerator/pull/80))
+- Bump `org.apache.cxf:cxf-core` from 4.1.4 to 4.2.2 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61), [#80](https://github.com/ebsnet/CSRGenerator/pull/80), [#85](https://github.com/ebsnet/CSRGenerator/pull/85))
 - Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 4.0.2 to 4.0.3 ([#62](https://github.com/ebsnet/CSRGenerator/pull/62))
 - Bump `lcollins/pmd-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
 - Bump `lcollins/spotbugs-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `org.bouncycastle:bcprov-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bctls-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
 - Bump `org.bouncycastle:bcutil-jdk18on` from 1.83 to 1.84 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71))
-- Bump `com.github.spotbugs` from 6.4.8 to 6.5.5 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71), [#72](https://github.com/ebsnet/CSRGenerator/pull/72), [#75](https://github.com/ebsnet/CSRGenerator/pull/75), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
+- Bump `com.github.spotbugs` from 6.4.8 to 6.5.6 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71), [#72](https://github.com/ebsnet/CSRGenerator/pull/72), [#75](https://github.com/ebsnet/CSRGenerator/pull/75), [#84](https://github.com/ebsnet/CSRGenerator/pull/84), [#85](https://github.com/ebsnet/CSRGenerator/pull/85))
 - Bump `nebula.lint` from 21.1.3 to 21.2.1 ([#73](https://github.com/ebsnet/CSRGenerator/pull/73), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 
 ## [1.4.1] 2026-01-19

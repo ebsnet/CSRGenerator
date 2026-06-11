@@ -17,7 +17,7 @@ import org.bouncycastle.operator.OperatorCreationException;
  * {@link InputDecryptorProvider} that uses an {@link Optional} password or asks the user to enter
  * the password.
  */
-public class OptionalInteractiveDecryptorProvider
+public final class OptionalInteractiveDecryptorProvider
     implements InputDecryptorProvider, PEMDecryptorProvider, InteractivePasswordProvider {
   private final Optional<char[]> pass;
   private final Path path;
