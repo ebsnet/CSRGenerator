@@ -30,12 +30,6 @@ public enum KeyType {
   /** position of keyAgreement value */
   private static final int KEY_USAGE_KEY_AGREEMENT = 4;
 
-  /** indicates start of certificate */
-  private static final String PEM_BEGIN = "-----BEGIN CERTIFICATE-----\n";
-
-  /** indicates end of certificate */
-  private static final String PEM_END = "\n-----END CERTIFICATE-----";
-
   private final String filename;
 
   KeyType(final String filename) {
