@@ -58,7 +58,6 @@ public class BaseCommand {
     // this class can only be instantiated from an extending class
   }
 
-  @SuppressWarnings("PMD.UselessParentheses") // false positive
   protected Optional<char[]> passForType(final KeyType keyType) {
     return (switch (keyType) {
           case SIG -> this.sigPass;
