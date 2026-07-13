@@ -11,7 +11,7 @@ plugins {
   id 'com.diffplug.spotless' version '8.8.0'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.5.8'
+  id 'com.github.spotbugs' version '6.5.9'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
@@ -110,8 +110,8 @@ pmd {
 }
 
 def versions = [
-  bc: '1.84',
-  junit: '6.1.1',
+  bc: '1.85',
+  junit: '6.1.2',
 ]
 
 dependencies {
