@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `com.github.spotbugs` from 6.4.8 to 6.5.9 ([#71](https://github.com/ebsnet/CSRGenerator/pull/71), [#72](https://github.com/ebsnet/CSRGenerator/pull/72), [#75](https://github.com/ebsnet/CSRGenerator/pull/75), [#84](https://github.com/ebsnet/CSRGenerator/pull/84), [#85](https://github.com/ebsnet/CSRGenerator/pull/85), [#88](https://github.com/ebsnet/CSRGenerator/pull/88), [#92](https://github.com/ebsnet/CSRGenerator/pull/92))
 - Bump `nebula.lint` from 21.1.3 to 21.2.1 ([#73](https://github.com/ebsnet/CSRGenerator/pull/73), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 - Bump `actions/checkout` from 6 to 7 ([#87](https://github.com/ebsnet/CSRGenerator/pull/87))
+- Bump `actions/setup-java` from 5 to 5.6.0 ([#94](https://github.com/ebsnet/CSRGenerator/pull/94))
 
 ## [1.4.1] 2026-01-19
 
