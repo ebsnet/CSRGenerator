@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `org.apache.cxf:cxf-core` from 4.1.4 to 4.2.3 ([#61](https://github.com/ebsnet/CSRGenerator/pull/61), [#80](https://github.com/ebsnet/CSRGenerator/pull/80), [#85](https://github.com/ebsnet/CSRGenerator/pull/85), [#95](https://github.com/ebsnet/CSRGenerator/pull/95))
 - Bump `jakarta.xml.ws:jakarta.xml.ws-api` from 4.0.2 to 4.0.3 ([#62](https://github.com/ebsnet/CSRGenerator/pull/62))
 - Bump `lcollins/pmd-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
-- Bump `lcollins/spotbugs-github-action` from 3.1.0 to 3.2.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65))
+- Bump `lcollins/spotbugs-github-action` from 3.1.0 to 4.0.0 ([#65](https://github.com/ebsnet/CSRGenerator/pull/65), [#96](https://github.com/ebsnet/CSRGenerator/pull/96))
 - Bump `com.sun.xml.ws:jaxws-ri` from 4.0.3 to 4.0.5 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 - Bump `com.sun.xml.ws:jaxws-rt` from 4.0.3 to 4.0.5 ([#68](https://github.com/ebsnet/CSRGenerator/pull/68), [#84](https://github.com/ebsnet/CSRGenerator/pull/84))
 - Bump `softprops/action-gh-release` from 2 to 3 ([#69](https://github.com/ebsnet/CSRGenerator/pull/69))
