@@ -110,7 +110,7 @@ pmd {
 }
 
 def versions = [
-  bc: '1.85',
+  bc: '1.86',
   junit: '6.1.3',
 ]
 
