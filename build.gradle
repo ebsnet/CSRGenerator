@@ -11,7 +11,7 @@ plugins {
   id 'com.diffplug.spotless' version '8.10.4'
   // analyze code and find potential bugs
   id 'pmd'
-  id 'com.github.spotbugs' version '6.5.12'
+  id 'com.github.spotbugs' version '6.5.13'
   // test coverage report
   id 'jacoco'
   // maven plugin to upload to repository
@@ -21,7 +21,7 @@ plugins {
   // resolve git branch name
   id 'org.ajoberstar.grgit' version '5.3.3'
 
-  id "com.github.bjornvester.wsdl2java" version "2.0.2"
+  id "com.github.bjornvester.wsdl2java" version "2.0.4"
 }
 
 group = 'de.ebsnet'
